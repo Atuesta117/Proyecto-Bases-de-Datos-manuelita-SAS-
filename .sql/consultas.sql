@@ -114,18 +114,23 @@ GROUP BY pr.id_proveedor, pr.nombre_empresa
 ORDER BY stock_total_en_bodega DESC;
 
 
--- CONSULTA 9: Alerta de Quiebre de Stock
--- Objetivo: Enlistar los productos cuyas existencias están por debajo del stock de seguridad.
+-- CONSULTA 9: Análisis de Diversificación y Recurrencia de Clientes
+-- Objetivo: Identificar los clientes corporativos que compran múltiples categorías 
+-- de productos (ej. Azúcar y Biocombustibles), evaluando su ticket promedio de compra.
 SELECT 
-    p.id_producto,
-    p.nombre,
-    sp.cantidad_disponible,
-    sp.stock_minimo,
-    (sp.stock_minimo - sp.cantidad_disponible) AS unidades_por_debajo_del_minimo
-FROM STOCKPRODUCTOS sp
-JOIN PRODUCTO p ON sp.id_producto = p.id_producto
-WHERE sp.cantidad_disponible < sp.stock_minimo
-ORDER BY unidades_por_debajo_del_minimo DESC;
+    u.id_usuario,
+    u.nombre AS empresa_cliente,
+    u.apellido AS marca_grupo,
+    COUNT(DISTINCT p.categoria) AS categorias_distintas_compradas,
+    COUNT(DISTINCT pe.id_pedido) AS total_pedidos_realizados,
+    ROUND(AVG(pe.precio_pedido), 2) AS ticket_promedio_precio_pedido
+FROM USUARIOS u
+JOIN PEDIDO pe ON u.id_usuario = pe.id_usuario
+JOIN PRODUCTOS_ASOCIADOS pa ON pe.id_pedido = pa.id_pedido
+JOIN PRODUCTO p ON pa.id_producto = p.id_producto
+GROUP BY u.id_usuario, u.nombre, u.apellido
+HAVING COUNT(DISTINCT p.categoria) >= 2
+ORDER BY total_pedidos_realizados DESC;
 
 
 -- CONSULTA 10: Auditoría y Trazabilidad de Historial de Estados de Pedidos

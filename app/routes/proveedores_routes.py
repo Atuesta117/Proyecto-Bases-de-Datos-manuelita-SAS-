@@ -1,8 +1,10 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 from app.services import proveedor_service
 
 proveedores_bp = Blueprint("proveedores", __name__, url_prefix="/api/proveedores")
 
+
+# ============== RUTAS API ==============
 
 @proveedores_bp.route("/", methods=["GET"])
 def listar_proveedores():
@@ -82,3 +84,18 @@ def eliminar_proveedor(id_proveedor):
         ), 409
 
     return jsonify({"mensaje": "Proveedor eliminado con éxito"}), 200
+
+
+
+@proveedores_bp.route("/web/", methods=["GET"])
+def ver_proveedores():
+    proveedores = proveedor_service.obtener_todos_los_proveedores()
+    return render_template('proveedores.html', proveedores=proveedores)
+
+
+@proveedores_bp.route("/web/<string:id_proveedor>", methods=["GET"])
+def ver_proveedor_detalle(id_proveedor):
+    proveedor = proveedor_service.obtener_proveedor_por_id(id_proveedor)
+    if proveedor is None:
+        return jsonify({"error": "Proveedor no encontrado"}), 404
+    return render_template('proveedor_detalle.html', proveedor=proveedor)

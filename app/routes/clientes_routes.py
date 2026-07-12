@@ -1,8 +1,10 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 from app.services import cliente_service
 
 clientes_bp = Blueprint("clientes", __name__, url_prefix="/api/clientes")
 
+
+# ============== RUTAS API ==============
 
 @clientes_bp.route("/", methods=["GET"])
 def listar_clientes():
@@ -76,3 +78,18 @@ def eliminar_cliente(id_cliente):
         ), 409
 
     return jsonify({"mensaje": "Cliente eliminado"}), 200
+
+
+
+@clientes_bp.route("/web/", methods=["GET"])
+def ver_clientes():
+    clientes = cliente_service.obtener_todos_los_clientes()
+    return render_template('clientes.html', clientes=clientes)
+
+
+@clientes_bp.route("/web/<string:id_cliente>", methods=["GET"])
+def ver_cliente_detalle(id_cliente):
+    cliente = cliente_service.obtener_cliente_por_id(id_cliente)
+    if cliente is None:
+        return jsonify({"error": "Cliente no encontrado"}), 404
+    return render_template('cliente_detalle.html', cliente=cliente)

@@ -36,7 +36,7 @@ def crear_cliente():
 
     try:
         nuevo = cliente_service.crear_cliente(data)
-    except Exception as e:
+    except (ValueError, Exception) as e:
         return jsonify({"error": str(e)}), 400
 
     return jsonify(nuevo.to_dict()), 201
@@ -45,7 +45,12 @@ def crear_cliente():
 @clientes_bp.route("/<string:id_cliente>", methods=["PUT"])
 def actualizar_cliente(id_cliente):
     data = request.get_json()
-    cliente = cliente_service.actualizar_cliente(id_cliente, data)
+
+    try:
+        cliente = cliente_service.actualizar_cliente(id_cliente, data)
+    except (ValueError, Exception) as e:
+        return jsonify({"error": str(e)}), 400
+
     if cliente is None:
         return jsonify({"error": "Cliente no encontrado"}), 404
     return jsonify(cliente.to_dict()), 200
@@ -60,6 +65,14 @@ def eliminar_cliente(id_cliente):
     if resultado == "tiene_facturas":
         return jsonify(
             {"error": "No se puede eliminar: el cliente tiene facturas asociadas"}
+        ), 409
+    if resultado == "tiene_pedidos":
+        return jsonify(
+            {"error": "No se puede eliminar: el cliente tiene pedidos asociados"}
+        ), 409
+    if resultado == "tiene_registros_asociados":
+        return jsonify(
+            {"error": "No se puede eliminar: el cliente tiene registros asociados"}
         ), 409
 
     return jsonify({"mensaje": "Cliente eliminado"}), 200

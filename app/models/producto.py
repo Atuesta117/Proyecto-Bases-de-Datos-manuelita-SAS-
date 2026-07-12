@@ -29,6 +29,9 @@ class Producto(db.Model):
     # hacer una consulta aparte cada vez (dato pedido por el documento)
     proveedor = db.relationship("Proveedor", backref="productos", lazy=True)
 
+    # Necesaria para poder leer el % de IVA al facturar sin consulta aparte
+    tipo_iva = db.relationship("TipoIva", backref="productos", lazy=True)
+
     def to_dict_completo(self):
         """Devuelve toda la información calculada al vuelo para el frontend"""
         # Valores de inventario por defecto por si no tiene registro en STOCKPRODUCTOS
@@ -103,4 +106,3 @@ class Producto(db.Model):
             "punto_reorden": punto_reorden,
             "necesita_pedido_por_tiempo_entrega": necesita_pedido_por_tiempo_entrega,
         }
-    )

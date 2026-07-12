@@ -342,8 +342,16 @@ CREATE TABLE PEDIDO_CONFIRMADO (
 );
 
 -- CAMION
+-- MODIFICADO: se agrega id_sede para saber a qué sede pertenece el camión
+-- (necesario para poder filtrar "camiones disponibles en esta sede").
 CREATE TABLE CAMION (
     id_camion       VARCHAR(100) PRIMARY KEY,
+
+    id_sede         VARCHAR(100)
+        REFERENCES SEDES(id_sede)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
     placa           VARCHAR(20)   NOT NULL UNIQUE,
     marca           VARCHAR(100)  NOT NULL,
     modelo          VARCHAR(100)  NOT NULL,
@@ -354,14 +362,23 @@ CREATE TABLE CAMION (
 );
 
 -- CONDUCTOR
+-- MODIFICADO: se agrega id_sede (a qué sede pertenece el conductor) y
+-- disponible (si puede ser asignado a un nuevo envío ahora mismo).
 CREATE TABLE CONDUCTOR (
     id_conductor                VARCHAR(100) PRIMARY KEY,
+
+    id_sede                     VARCHAR(100)
+        REFERENCES SEDES(id_sede)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
     nombre                      VARCHAR(100) NOT NULL,
     apellido                    VARCHAR(100) NOT NULL,
     cedula                      VARCHAR(20)  NOT NULL UNIQUE,
     telefono                    VARCHAR(20)  NOT NULL,
     licencia                    VARCHAR(50)  NOT NULL UNIQUE,
-    fecha_vencimiento_licencia  DATE         NOT NULL
+    fecha_vencimiento_licencia  DATE         NOT NULL,
+    disponible                  BOOLEAN      NOT NULL DEFAULT TRUE
 );
 
 -- CAMION_CONDUCTOR
@@ -386,11 +403,19 @@ CREATE TABLE CAMION_CONDUCTOR (
 );
 
 -- ENVIOS
+-- MODIFICADO: se agrega id_sede_origen para saber desde qué sede/bodega
+-- se despacha el envío (antes solo existía direccion_origen como texto
+-- libre, sin relación real a una sede física).
 CREATE TABLE ENVIOS (
     id_envio                VARCHAR(100) PRIMARY KEY,
 
     id_pedido_confirmado    VARCHAR(100) NOT NULL UNIQUE
         REFERENCES PEDIDO_CONFIRMADO(id_confirmacion)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    id_sede_origen          VARCHAR(100)
+        REFERENCES SEDES(id_sede)
         ON DELETE RESTRICT
         ON UPDATE CASCADE,
 
@@ -450,3 +475,7 @@ CREATE TABLE ASIGNACION_CAMIONES (
     fecha_carga          DATE NOT NULL DEFAULT CURRENT_DATE,
     CONSTRAINT uq_envio_camion UNIQUE (id_envio, id_camion)
 );
+
+-- Índices adicionales para las consultas de disponibilidad por sede
+CREATE INDEX idx_camion_sede_estado ON CAMION (id_sede, estado);
+CREATE INDEX idx_conductor_sede_disponible ON CONDUCTOR (id_sede, disponible);

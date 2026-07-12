@@ -6,55 +6,52 @@
 -- ============================================================
 -- 1. USUARIOS
 -- ============================================================
-INSERT INTO USUARIOS (id_usuario,nombre,apellido,email,contrasena,telefono,direccion,tipo_usuario,fecha_registro) VALUES
-('USRec10a9408a6d476c','Carlos','Mejia Osorio','admin@manuelita.com','$2b$12$hashAdminSecure123','3001234567','Cra 1 #1-1 Palmira Valle','admin','2022-01-01');
-
-INSERT INTO USUARIOS (id_usuario,nombre,apellido,email,contrasena,telefono,direccion,tipo_usuario,fecha_registro) VALUES
-('USR865f0dc589194e76','Juan Carlos','Restrepo Gómez','nestle.compras@nestle.com.co','$2b$12$hashCliente000Secure','3102345678','Cra 43A #1 Sur-100, Medellín','cliente','2023-04-08'),
-('USRd2ce6e5f9e0345f8','María Fernanda','López Arango','compras@colombina.com','$2b$12$hashCliente001Secure','3113456789','Via Cali-Yumbo Km 4, Yumbo','cliente','2022-12-22'),
-('USR93cc647733db4aef','Andrés Felipe','Martínez Cano','abastecimiento@postobon.com','$2b$12$hashCliente002Secure','3124567890','Av El Dorado #68B-61, Bogotá','cliente','2022-08-19'),
-('USR460a88e41d374868','Claudia Patricia','Sánchez Rivera','bimbo.compras@bimbo.com.co','$2b$12$hashCliente003Secure','3135678901','Zona Industrial Acopi, Yumbo','cliente','2022-04-07'),
-('USRc747a28316bc43a7','Ricardo Alberto','Torres Mejía','nutresa.comp@nutresa.com','$2b$12$hashCliente004Secure','3146789012','Calle 8 #50-67, Medellín','cliente','2022-11-18'),
-('USR294d1f472e94423a','Sandra Milena','Castro Vargas','zenu.abastec@zenu.com.co','$2b$12$hashCliente005Secure','3157890123','Cra 52 #20-31, Medellín','cliente','2023-12-08'),
-('USRdfe18fcbdea5447e','Pedro Antonio','Díaz Morales','super.alim@superalimentos.com','$2b$12$hashCliente006Secure','3168901234','Av 3N #23-45, Cali','cliente','2022-06-25'),
-('USR5c8419e81dbe4a4c','Lucía Mercedes','Herrera Ospina','carulla.comp@carulla.com','$2b$12$hashCliente007Secure','3179012345','Cra 7 #32-33, Bogotá','cliente','2023-09-11'),
-('USR4584d3f3dbab4b64','Jorge Iván','Cardona Patiño','exito.compras@grupoexito.com','$2b$12$hashCliente008Secure','3180123456','Calle 30 #43C-60, Medellín','cliente','2023-05-04'),
-('USR4f0362bda515444f','Patricia Elena','Moreno Ríos','compras@jumbo.co','$2b$12$hashCliente009Secure','3191234567','Cra 11 #82-01, Bogotá','cliente','2023-04-28'),
-('USRfd383d5a5cf24127','Luis Eduardo','Quintero Salazar','dist.valle@dvalle.com','$2b$12$hashCliente010Secure','3201234567','Cra 15 #8-42, Cali','cliente','2022-06-24'),
-('USRf49e9bbfde68483a','Ana María','Gómez Fernández','alim.pacifico@apsa.com','$2b$12$hashCliente011Secure','3212345678','Calle 70 #5-23, Buenaventura','cliente','2023-04-03'),
-('USRa7fdddc0c2dd451c','Hernán Darío','Muñoz Castillo','comer.andina@candina.com','$2b$12$hashCliente012Secure','3223456789','Cra 24 #12-56, Manizales','cliente','2023-12-19'),
-('USR53564c67a99d4212','Gloria Inés','Ramírez Pedraza','dist.occi@docci.com','$2b$12$hashCliente013Secure','3234567890','Av Simón Bolívar #5-21, Pereira','cliente','2022-04-22'),
-('USR193108ad3e4b40aa','Álvaro Miguel','Suárez Ocampo','merc.sur@msur.com','$2b$12$hashCliente014Secure','3245678901','Cra 3 #8-90, Pasto','cliente','2022-06-28'),
-('USR20f3bbe6d20d42b9','Diana Marcela','Vélez Montoya','granoscereales@gyc.com','$2b$12$hashCliente015Secure','3256789012','Cra 50 #20-31, Barranquilla','cliente','2023-04-09'),
-('USRb6e7f7de27404bbb','Fabio Ernesto','Bedoya Agudelo','agromar@iagro.com','$2b$12$hashCliente016Secure','3267890123','Zona Franca, Palmaseca','cliente','2022-06-12'),
-('USRfc2852ea936c4502','Norma Cecilia','Giraldo Betancur','bioetanol.dist@bdsa.com','$2b$12$hashCliente017Secure','3278901234','Autopista Cali-Palmira Km 2','cliente','2023-12-23'),
-('USReb29870935454338','Óscar Eduardo','Hurtado Castaño','alim.nv@apnv.com','$2b$12$hashCliente018Secure','3289012345','Cra 25 #18-50, Ibagué','cliente','2022-09-20'),
-('USRf489d28a83544ee9','Pilar Adriana','Acosta Londoño','palmllan@pllano.com','$2b$12$hashCliente019Secure','3290123456','Via Villavicencio Km 12','cliente','2022-11-06'),
-('USR85b144a5967e4e07','Manuel José','Cano Rendón','compras@tiendas-d1.com','$2b$12$hashCliente020Secure','3301234567','Cra 7 #71-21, Bogotá','cliente','2022-06-22'),
-('USRd742f000b7b54e36','Elizabeth','Zapata Guerrero','olimpica.abast@olimpica.com','$2b$12$hashCliente021Secure','3312345678','Cra 54 #72-60, Barranquilla','cliente','2022-04-27'),
-('USRb9077063e1f04e94','Gabriel Darío','Ruiz Valencia','surtimax.comp@surtimax.com','$2b$12$hashCliente022Secure','3323456789','Av Eldorado #89-10, Bogotá','cliente','2023-06-09'),
-('USR2588b24bac6742c8','Teresa de Jesús','Naranjo Arias','la14.compras@la14.com','$2b$12$hashCliente023Secure','3334567890','Calle 5 #50-41, Cali','cliente','2023-11-07'),
-('USR68c53d38ea8644aa','Jhon Jairo','Peláez Tobón','alkosto@alkosto.com','$2b$12$hashCliente024Secure','3345678901','Autopista Norte Km 17, Bogotá','cliente','2023-07-05'),
-('USR979668f4e711439f','Marcela','Aguirre Vargas','superinter@superinter.com','$2b$12$hashCliente025Secure','3356789012','Cra 1 #58-40, Pereira','cliente','2023-05-24'),
-('USRe34d5e2558514b30','Mauricio','Echavarría Toro','colsub@colsubsidio.com','$2b$12$hashCliente026Secure','3367890123','Cra 26 #71-78, Bogotá','cliente','2023-11-12'),
-('USRf59e33f37cec42c9','Consuelo','Álvarez Prada','cafam.comp@cafam.com','$2b$12$hashCliente027Secure','3378901234','Av 68 #90-88, Bogotá','cliente','2023-05-03'),
-('USRa0c4cbcf30ec4260','Felipe Antonio','Zuleta Isaza','surtifam@sfamiliar.com','$2b$12$hashCliente028Secure','3389012345','Cra 9 #14-21, Neiva','cliente','2022-01-21'),
-('USRaf09c7f8421a4eab','Adriana','Cataño Henao','maxicali@maxi.com','$2b$12$hashCliente029Secure','3390123456','Calle 44N #3BN-41, Cali','cliente','2023-12-20'),
-('USR0d8a361d9baf42b9','Juan Carlos','Restrepo Gómez','carvajal.comp@carvajal.com','$2b$12$hashCliente030Secure','3401234567','Zona Industrial Cali','cliente','2023-10-17'),
-('USR64abfcdacf4c41b5','María Fernanda','López Arango','harinera@hdvsa.com','$2b$12$hashCliente031Secure','3412345678','Cra 1W #34-22, Cali','cliente','2022-11-22'),
-('USRdb2582ad8985443f','Andrés Felipe','Martínez Cano','sucromiles@sucromiles.com','$2b$12$hashCliente032Secure','3423456789','Calle 100 #19A-61, Bogotá','cliente','2023-09-25'),
-('USR4b1c25ef91cb4bf7','Claudia Patricia','Sánchez Rivera','biofilm@biofilm.co','$2b$12$hashCliente033Secure','3434567890','Parque Industrial, Yumbo','cliente','2023-04-14'),
-('USR0ceaa846609b430f','Ricardo Alberto','Torres Mejía','bayer.agro@bayer.co','$2b$12$hashCliente034Secure','3445678901','Cra 11 #87-51, Bogotá','cliente','2023-04-17'),
-('USR601fc2db88b64a19','Sandra Milena','Castro Vargas','corteva@corteva.com','$2b$12$hashCliente035Secure','3456789012','Cra 7 #71-21 Of 702, Bogotá','cliente','2022-08-28'),
-('USRa20bb902898547f7','Pedro Antonio','Díaz Morales','biopalma@bioenergy.co','$2b$12$hashCliente036Secure','3467890123','Via Palmira-Buga Km 5','cliente','2022-12-05'),
-('USRdd7aca3bc2b24d51','Lucía Mercedes','Herrera Ospina','acygras@ayg.com','$2b$12$hashCliente037Secure','3478901234','Zona Franca Palmaseca','cliente','2022-05-20'),
-('USR02c3019971aa4400','Jorge Iván','Cardona Patiño','alcohol.ind@aind.com','$2b$12$hashCliente038Secure','3489012345','Parque Ind. Acopi Yumbo','cliente','2022-04-30'),
-('USR27c0f5924cc84edd','Patricia Elena','Moreno Ríos','frigua@frigua.com','$2b$12$hashCliente039Secure','3490123456','Cra 64 #88-30, Bogotá','cliente','2022-06-02');
+INSERT INTO CLIENTES (id_cliente,tipo_documento,numero_identificacion,nombre_razon_social,email,telefono,ciudad,direccion_residencia,direccion_operativa,habeas_data,tipo_regimen,fecha_registro) VALUES
+('USR865f0dc589194e76','NIT','9000000001','Juan Carlos Restrepo Gómez','nestle.compras@nestle.com.co','3102345678','Medellín','Cra 43A #1 Sur-100, Medellín','Cra 43A #1 Sur-100, Medellín',TRUE,'responsable_iva','2023-04-08'),
+('USRd2ce6e5f9e0345f8','NIT','9000000002','María Fernanda López Arango','compras@colombina.com','3113456789','Yumbo','Via Cali-Yumbo Km 4, Yumbo','Via Cali-Yumbo Km 4, Yumbo',TRUE,'responsable_iva','2022-12-22'),
+('USR93cc647733db4aef','NIT','9000000003','Andrés Felipe Martínez Cano','abastecimiento@postobon.com','3124567890','Bogotá','Av El Dorado #68B-61, Bogotá','Av El Dorado #68B-61, Bogotá',TRUE,'responsable_iva','2022-08-19'),
+('USR460a88e41d374868','NIT','9000000004','Claudia Patricia Sánchez Rivera','bimbo.compras@bimbo.com.co','3135678901','Yumbo','Zona Industrial Acopi, Yumbo','Zona Industrial Acopi, Yumbo',TRUE,'responsable_iva','2022-04-07'),
+('USRc747a28316bc43a7','NIT','9000000005','Ricardo Alberto Torres Mejía','nutresa.comp@nutresa.com','3146789012','Medellín','Calle 8 #50-67, Medellín','Calle 8 #50-67, Medellín',TRUE,'responsable_iva','2022-11-18'),
+('USR294d1f472e94423a','NIT','9000000006','Sandra Milena Castro Vargas','zenu.abastec@zenu.com.co','3157890123','Medellín','Cra 52 #20-31, Medellín','Cra 52 #20-31, Medellín',TRUE,'responsable_iva','2023-12-08'),
+('USRdfe18fcbdea5447e','NIT','9000000007','Pedro Antonio Díaz Morales','super.alim@superalimentos.com','3168901234','Cali','Av 3N #23-45, Cali','Av 3N #23-45, Cali',TRUE,'responsable_iva','2022-06-25'),
+('USR5c8419e81dbe4a4c','NIT','9000000008','Lucía Mercedes Herrera Ospina','carulla.comp@carulla.com','3179012345','Bogotá','Cra 7 #32-33, Bogotá','Cra 7 #32-33, Bogotá',TRUE,'responsable_iva','2023-09-11'),
+('USR4584d3f3dbab4b64','NIT','9000000009','Jorge Iván Cardona Patiño','exito.compras@grupoexito.com','3180123456','Medellín','Calle 30 #43C-60, Medellín','Calle 30 #43C-60, Medellín',TRUE,'responsable_iva','2023-05-04'),
+('USR4f0362bda515444f','NIT','9000000010','Patricia Elena Moreno Ríos','compras@jumbo.co','3191234567','Bogotá','Cra 11 #82-01, Bogotá','Cra 11 #82-01, Bogotá',TRUE,'responsable_iva','2023-04-28'),
+('USRfd383d5a5cf24127','NIT','9000000011','Luis Eduardo Quintero Salazar','dist.valle@dvalle.com','3201234567','Cali','Cra 15 #8-42, Cali','Cra 15 #8-42, Cali',TRUE,'responsable_iva','2022-06-24'),
+('USRf49e9bbfde68483a','NIT','9000000012','Ana María Gómez Fernández','alim.pacifico@apsa.com','3212345678','Buenaventura','Calle 70 #5-23, Buenaventura','Calle 70 #5-23, Buenaventura',TRUE,'responsable_iva','2023-04-03'),
+('USRa7fdddc0c2dd451c','NIT','9000000013','Hernán Darío Muñoz Castillo','comer.andina@candina.com','3223456789','Manizales','Cra 24 #12-56, Manizales','Cra 24 #12-56, Manizales',TRUE,'responsable_iva','2023-12-19'),
+('USR53564c67a99d4212','NIT','9000000014','Gloria Inés Ramírez Pedraza','dist.occi@docci.com','3234567890','Pereira','Av Simón Bolívar #5-21, Pereira','Av Simón Bolívar #5-21, Pereira',TRUE,'responsable_iva','2022-04-22'),
+('USR193108ad3e4b40aa','NIT','9000000015','Álvaro Miguel Suárez Ocampo','merc.sur@msur.com','3245678901','Pasto','Cra 3 #8-90, Pasto','Cra 3 #8-90, Pasto',TRUE,'responsable_iva','2022-06-28'),
+('USR20f3bbe6d20d42b9','NIT','9000000016','Diana Marcela Vélez Montoya','granoscereales@gyc.com','3256789012','Barranquilla','Cra 50 #20-31, Barranquilla','Cra 50 #20-31, Barranquilla',TRUE,'responsable_iva','2023-04-09'),
+('USRb6e7f7de27404bbb','NIT','9000000017','Fabio Ernesto Bedoya Agudelo','agromar@iagro.com','3267890123','Palmaseca','Zona Franca, Palmaseca','Zona Franca, Palmaseca',TRUE,'responsable_iva','2022-06-12'),
+('USRfc2852ea936c4502','NIT','9000000018','Norma Cecilia Giraldo Betancur','bioetanol.dist@bdsa.com','3278901234','Valle del Cauca','Autopista Cali-Palmira Km 2','Autopista Cali-Palmira Km 2',TRUE,'responsable_iva','2023-12-23'),
+('USReb29870935454338','NIT','9000000019','Óscar Eduardo Hurtado Castaño','alim.nv@apnv.com','3289012345','Ibagué','Cra 25 #18-50, Ibagué','Cra 25 #18-50, Ibagué',TRUE,'responsable_iva','2022-09-20'),
+('USRf489d28a83544ee9','NIT','9000000020','Pilar Adriana Acosta Londoño','palmllan@pllano.com','3290123456','Valle del Cauca','Via Villavicencio Km 12','Via Villavicencio Km 12',TRUE,'responsable_iva','2022-11-06'),
+('USR85b144a5967e4e07','NIT','9000000021','Manuel José Cano Rendón','compras@tiendas-d1.com','3301234567','Bogotá','Cra 7 #71-21, Bogotá','Cra 7 #71-21, Bogotá',TRUE,'responsable_iva','2022-06-22'),
+('USRd742f000b7b54e36','NIT','9000000022','Elizabeth Zapata Guerrero','olimpica.abast@olimpica.com','3312345678','Barranquilla','Cra 54 #72-60, Barranquilla','Cra 54 #72-60, Barranquilla',TRUE,'responsable_iva','2022-04-27'),
+('USRb9077063e1f04e94','NIT','9000000023','Gabriel Darío Ruiz Valencia','surtimax.comp@surtimax.com','3323456789','Bogotá','Av Eldorado #89-10, Bogotá','Av Eldorado #89-10, Bogotá',TRUE,'responsable_iva','2023-06-09'),
+('USR2588b24bac6742c8','NIT','9000000024','Teresa de Jesús Naranjo Arias','la14.compras@la14.com','3334567890','Cali','Calle 5 #50-41, Cali','Calle 5 #50-41, Cali',TRUE,'responsable_iva','2023-11-07'),
+('USR68c53d38ea8644aa','NIT','9000000025','Jhon Jairo Peláez Tobón','alkosto@alkosto.com','3345678901','Bogotá','Autopista Norte Km 17, Bogotá','Autopista Norte Km 17, Bogotá',TRUE,'responsable_iva','2023-07-05'),
+('USR979668f4e711439f','NIT','9000000026','Marcela Aguirre Vargas','superinter@superinter.com','3356789012','Pereira','Cra 1 #58-40, Pereira','Cra 1 #58-40, Pereira',TRUE,'responsable_iva','2023-05-24'),
+('USRe34d5e2558514b30','NIT','9000000027','Mauricio Echavarría Toro','colsub@colsubsidio.com','3367890123','Bogotá','Cra 26 #71-78, Bogotá','Cra 26 #71-78, Bogotá',TRUE,'responsable_iva','2023-11-12'),
+('USRf59e33f37cec42c9','NIT','9000000028','Consuelo Álvarez Prada','cafam.comp@cafam.com','3378901234','Bogotá','Av 68 #90-88, Bogotá','Av 68 #90-88, Bogotá',TRUE,'responsable_iva','2023-05-03'),
+('USRa0c4cbcf30ec4260','NIT','9000000029','Felipe Antonio Zuleta Isaza','surtifam@sfamiliar.com','3389012345','Neiva','Cra 9 #14-21, Neiva','Cra 9 #14-21, Neiva',TRUE,'responsable_iva','2022-01-21'),
+('USRaf09c7f8421a4eab','NIT','9000000030','Adriana Cataño Henao','maxicali@maxi.com','3390123456','Cali','Calle 44N #3BN-41, Cali','Calle 44N #3BN-41, Cali',TRUE,'responsable_iva','2023-12-20'),
+('USR0d8a361d9baf42b9','NIT','9000000031','Juan Carlos Restrepo Gómez','carvajal.comp@carvajal.com','3401234567','Valle del Cauca','Zona Industrial Cali','Zona Industrial Cali',TRUE,'responsable_iva','2023-10-17'),
+('USR64abfcdacf4c41b5','NIT','9000000032','María Fernanda López Arango','harinera@hdvsa.com','3412345678','Cali','Cra 1W #34-22, Cali','Cra 1W #34-22, Cali',TRUE,'responsable_iva','2022-11-22'),
+('USRdb2582ad8985443f','NIT','9000000033','Andrés Felipe Martínez Cano','sucromiles@sucromiles.com','3423456789','Bogotá','Calle 100 #19A-61, Bogotá','Calle 100 #19A-61, Bogotá',TRUE,'responsable_iva','2023-09-25'),
+('USR4b1c25ef91cb4bf7','NIT','9000000034','Claudia Patricia Sánchez Rivera','biofilm@biofilm.co','3434567890','Yumbo','Parque Industrial, Yumbo','Parque Industrial, Yumbo',TRUE,'responsable_iva','2023-04-14'),
+('USR0ceaa846609b430f','NIT','9000000035','Ricardo Alberto Torres Mejía','bayer.agro@bayer.co','3445678901','Bogotá','Cra 11 #87-51, Bogotá','Cra 11 #87-51, Bogotá',TRUE,'responsable_iva','2023-04-17'),
+('USR601fc2db88b64a19','NIT','9000000036','Sandra Milena Castro Vargas','corteva@corteva.com','3456789012','Bogotá','Cra 7 #71-21 Of 702, Bogotá','Cra 7 #71-21 Of 702, Bogotá',TRUE,'responsable_iva','2022-08-28'),
+('USRa20bb902898547f7','NIT','9000000037','Pedro Antonio Díaz Morales','biopalma@bioenergy.co','3467890123','Valle del Cauca','Via Palmira-Buga Km 5','Via Palmira-Buga Km 5',TRUE,'responsable_iva','2022-12-05'),
+('USRdd7aca3bc2b24d51','NIT','9000000038','Lucía Mercedes Herrera Ospina','acygras@ayg.com','3478901234','Valle del Cauca','Zona Franca Palmaseca','Zona Franca Palmaseca',TRUE,'responsable_iva','2022-05-20'),
+('USR02c3019971aa4400','NIT','9000000039','Jorge Iván Cardona Patiño','alcohol.ind@aind.com','3489012345','Valle del Cauca','Parque Ind. Acopi Yumbo','Parque Ind. Acopi Yumbo',TRUE,'responsable_iva','2022-04-30'),
+('USR27c0f5924cc84edd','NIT','9000000040','Patricia Elena Moreno Ríos','frigua@frigua.com','3490123456','Bogotá','Cra 64 #88-30, Bogotá','Cra 64 #88-30, Bogotá',TRUE,'responsable_iva','2022-06-02');
 
 -- ============================================================
 -- 2. PROVEEDOR
 -- ============================================================
-INSERT INTO PROVEEDOR (id_proveedor,nombre_empresa,nit,contacto,telefono,email,direccion) VALUES
+INSERT INTO PROVEEDORES (id_proveedor,nombre_razon_social,rut,contacto,telefono,email,direccion) VALUES
 ('PRVfdea923c98a8422c','Yara Colombia SAS','900123456-1','Ing. Carlos Suárez','6012345678','yara.ventas@yara.com','Cra 7 #113-43 Of 1002, Bogotá'),
 ('PRVb9a65118b75a40cd','Carvajal Empaques SA','800234567-2','Ing. Laura Rincón','6023456789','carvajal@empaques.com','Zona Industrial Cali, Valle'),
 ('PRVf3c91ca0f94f491b','Dow AgroSciences Colombia','890345678-3','Dr. Hernán Vélez','6034567890','dow.agro@dow.com','Cra 11A #93-05, Bogotá'),
@@ -89,7 +86,7 @@ INSERT INTO LOTES (id_lote,id_proveedor,fecha_ingreso,fecha_vencimiento,cantidad
 -- ============================================================
 -- 4. PRODUCTO
 -- ============================================================
-INSERT INTO PRODUCTO (id_producto,id_lote,nombre,descripcion,precio,categoria,peso,unidad_medida) VALUES
+INSERT INTO PRODUCTOS (id_producto,id_lote,nombre,descripcion,precio,categoria,peso,unidad_medida) VALUES
 ('PRD802982bff1294be0','LOTafa1997be3014e3b','Azúcar Refinada Industrial Alta Pureza','Azúcar blanca refinada >99.9% sacarosa para industria alimentaria, bulk 50kg',185000,'Azúcares Industriales',50.0,'kg'),
 ('PRD8ef56583009748c0','LOT887c1f58a9b2413d','Azúcar Blanca Extra Premium','Azúcar blanca granulada calidad extra para consumo masivo y confitería',4200,'Azúcares Consumo',1.0,'kg'),
 ('PRD47d829354c084861','LOT85973cf7b7394c51','Azúcar Orgánica Certificada','Azúcar orgánica certificada USDA/NOP y BCS, sin agroquímicos',7800,'Azúcares Especiales',1.0,'kg'),
@@ -159,7 +156,7 @@ INSERT INTO STOCKPRODUCTOS (id_stock,id_producto,cantidad_disponible,cantidad_re
 -- ============================================================
 -- 6. PEDIDO
 -- ============================================================
-INSERT INTO PEDIDO (id_pedido,id_usuario,fecha_pedido,estado,metodo_pago,precio_pedido,precio_envio) VALUES
+INSERT INTO FACTURAS (id_factura,id_cliente,fecha_expedicion,estado,metodo_pago,subtotal,precio_envio) VALUES
 ('PEDccbf825dbf224cc3','USRe34d5e2558514b30','2023-09-09','enviado','transferencia',818650450,750000),
 ('PED4fa10fc35ec3434b','USR93cc647733db4aef','2023-02-27','cancelado','transferencia',1499287860,350000),
 ('PED72f25f749e9d4adb','USR193108ad3e4b40aa','2024-05-11','enviado','tarjeta',2862525750,500000),

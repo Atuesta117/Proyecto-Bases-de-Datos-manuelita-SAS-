@@ -1,4 +1,5 @@
 from app import db
+from datetime import date
 
 
 class Cliente(db.Model):
@@ -27,6 +28,44 @@ class Cliente(db.Model):
     # --- Metadata ---
     fecha_registro = db.Column(db.Date, nullable=False, default=db.func.current_date())
 
+    def to_dict(self):
+        return {
+            "id_cliente": self.id_cliente,
+            "tipo_documento": self.tipo_documento,
+            "numero_identificacion": self.numero_identificacion,
+            "nombre_razon_social": self.nombre_razon_social,
+            "email": self.email,
+            "telefono": self.telefono,
+            "ciudad": self.ciudad,
+            "direccion_residencia": self.direccion_residencia,
+            "direccion_operativa": self.direccion_operativa,
+            "representante_legal": self.representante_legal,
+            "habeas_data": self.habeas_data,
+            "tipo_regimen": self.tipo_regimen,
+            "fecha_registro": self.fecha_registro.isoformat()
+            if self.fecha_registro
+            else None,
+        }
+
     # opcional
     def __repr__(self):
         return f"<Cliente {self.id_cliente} - {self.nombre_razon_social}>"
+
+    def to_dict(self):
+        return {
+            "id_cliente": self.id_cliente,
+            "tipo_documento": self.tipo_documento,
+            "numero_identificacion": self.numero_identificacion,
+            "nombre_razon_social": self.nombre_razon_social,
+            "email": self.email,
+            "telefono": self.telefono,
+            "ciudad": self.ciudad,
+            "direccion_residencia": self.direccion_residencia,
+            "direccion_operativa": self.direccion_operativa,
+            "representante_legal": self.representante_legal,
+            "habeas_data": self.habeas_data,
+            "tipo_regimen": self.tipo_regimen,
+            "fecha_registro": self.fecha_registro.isoformat()
+            if isinstance(self.fecha_registro, date)
+            else self.fecha_registro,
+        }

@@ -19,7 +19,7 @@ CREATE TABLE CLIENTES (
 );
 
 -- PROVEEDORES
-CREATE TABLE PROVEEDORES (
+ CREATE TABLE PROVEEDORES (
     id_proveedor            VARCHAR(100) PRIMARY KEY,
     nombre_razon_social     VARCHAR(100) NOT NULL,
     tipo_documento          VARCHAR(5)   NOT NULL CHECK (tipo_documento IN ('CC','NIT','CE')),

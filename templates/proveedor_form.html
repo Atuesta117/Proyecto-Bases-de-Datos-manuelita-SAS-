@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}{% if proveedor %}Editar Proveedor{% else %}Nuevo Proveedor{% endif %} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>{% if proveedor %}Editar Proveedor{% else %}Nuevo Proveedor{% endif %}</h1>
+    <a href="{{ url_for('proveedores.ver_proveedores') }}" class="btn btn-secondary">Volver</a>
+</div>
+
+<div class="detail-card">
+    {% if error %}
+    <div class="alert-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" class="form-grid">
+
+        <div class="form-group">
+            <label for="id_proveedor">ID Proveedor *</label>
+            <input type="text" id="id_proveedor" name="id_proveedor"
+                   value="{{ proveedor.id_proveedor if proveedor else '' }}"
+                   {% if proveedor %}readonly{% endif %} required>
+        </div>
+
+        <div class="form-group">
+            <label for="nombre_razon_social">Nombre o Razón Social *</label>
+            <input type="text" id="nombre_razon_social" name="nombre_razon_social"
+                   value="{{ proveedor.nombre_razon_social if proveedor else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="tipo_documento">Tipo de Documento *</label>
+            <select id="tipo_documento" name="tipo_documento" required>
+                <option value="CC" {% if proveedor and proveedor.tipo_documento == 'CC' %}selected{% endif %}>CC</option>
+                <option value="NIT" {% if proveedor and proveedor.tipo_documento == 'NIT' %}selected{% endif %}>NIT</option>
+                <option value="CE" {% if proveedor and proveedor.tipo_documento == 'CE' %}selected{% endif %}>CE</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="numero_identificacion">Número de Identificación *</label>
+            <input type="text" id="numero_identificacion" name="numero_identificacion"
+                   value="{{ proveedor.numero_identificacion if proveedor else '' }}"
+                   {% if proveedor %}readonly{% endif %} required>
+            {% if proveedor %}<small>No editable (dato crítico contable)</small>{% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="rut">RUT *</label>
+            <input type="text" id="rut" name="rut"
+                   value="{{ proveedor.rut if proveedor else '' }}"
+                   {% if proveedor %}readonly{% endif %} required>
+            {% if proveedor %}<small>No editable (dato crítico contable)</small>{% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email"
+                   value="{{ proveedor.email if proveedor else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="ciudad">Ciudad</label>
+            <input type="text" id="ciudad" name="ciudad"
+                   value="{{ proveedor.ciudad if proveedor else 'Cali' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="num_contacto">Número de Contacto</label>
+            <input type="text" id="num_contacto" name="num_contacto"
+                   value="{{ proveedor.num_contacto if proveedor else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="tipo_num_contacto">Tipo de Contacto</label>
+            <select id="tipo_num_contacto" name="tipo_num_contacto">
+                <option value="">-- Selecciona --</option>
+                <option value="celular" {% if proveedor and proveedor.tipo_num_contacto == 'celular' %}selected{% endif %}>Celular</option>
+                <option value="telefono" {% if proveedor and proveedor.tipo_num_contacto == 'telefono' %}selected{% endif %}>Teléfono</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="direccion_operativa">Dirección Operativa</label>
+            <input type="text" id="direccion_operativa" name="direccion_operativa"
+                   value="{{ proveedor.direccion_operativa if proveedor else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="representante_legal">Representante Legal</label>
+            <input type="text" id="representante_legal" name="representante_legal"
+                   value="{{ proveedor.representante_legal if proveedor else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="tipo_proveedor">Tipo de Proveedor</label>
+            <select id="tipo_proveedor" name="tipo_proveedor">
+                <option value="materia_prima" {% if proveedor and proveedor.tipo_proveedor == 'materia_prima' %}selected{% endif %}>Materia prima</option>
+                <option value="servicios" {% if proveedor and proveedor.tipo_proveedor == 'servicios' %}selected{% endif %}>Servicios</option>
+                <option value="insumos" {% if proveedor and proveedor.tipo_proveedor == 'insumos' %}selected{% endif %}>Insumos</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="tiempo_entrega_promedio">Tiempo de Entrega Promedio (días)</label>
+            <input type="number" id="tiempo_entrega_promedio" name="tiempo_entrega_promedio" min="0"
+                   value="{{ proveedor.tiempo_entrega_promedio if proveedor else 0 }}">
+        </div>
+
+        <div class="form-group">
+            <label for="condiciones_pago">Condiciones de Pago (días)</label>
+            <input type="number" id="condiciones_pago" name="condiciones_pago" min="0"
+                   value="{{ proveedor.condiciones_pago if proveedor else 30 }}">
+        </div>
+
+        <div class="form-group">
+            <label for="calificacion">Calificación (1-5)</label>
+            <input type="number" id="calificacion" name="calificacion" min="1" max="5"
+                   value="{{ proveedor.calificacion if proveedor else 3 }}">
+        </div>
+
+        <div class="form-group">
+            <label for="tipo_regimen">Tipo de Régimen</label>
+            <select id="tipo_regimen" name="tipo_regimen">
+                <option value="no_responsable_iva" {% if proveedor and proveedor.tipo_regimen == 'no_responsable_iva' %}selected{% endif %}>No responsable de IVA</option>
+                <option value="responsable_iva" {% if proveedor and proveedor.tipo_regimen == 'responsable_iva' %}selected{% endif %}>Responsable de IVA</option>
+            </select>
+        </div>
+
+        <div class="form-group checkbox-group">
+            <input type="checkbox" id="habeas_data" name="habeas_data"
+                   {% if proveedor and proveedor.habeas_data %}checked{% endif %}>
+            <label for="habeas_data">Autoriza tratamiento de datos (Habeas Data)</label>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="{{ url_for('proveedores.ver_proveedores') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

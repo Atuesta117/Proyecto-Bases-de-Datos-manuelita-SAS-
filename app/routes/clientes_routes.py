@@ -1,18 +1,16 @@
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify
 from app.services import cliente_service
 
-clientes_bp = Blueprint("clientes", __name__, url_prefix="/api/clientes")
+clientes_api_bp = Blueprint("clientes_api", __name__, url_prefix="/api/clientes")
 
 
-# ============== RUTAS API ==============
-
-@clientes_bp.route("/", methods=["GET"])
+@clientes_api_bp.route("/", methods=["GET"])
 def listar_clientes():
     clientes = cliente_service.obtener_todos_los_clientes()
     return jsonify([c.to_dict() for c in clientes]), 200
 
 
-@clientes_bp.route("/<string:id_cliente>", methods=["GET"])
+@clientes_api_bp.route("/<string:id_cliente>", methods=["GET"])
 def obtener_cliente(id_cliente):
     cliente = cliente_service.obtener_cliente_por_id(id_cliente)
     if cliente is None:
@@ -20,7 +18,7 @@ def obtener_cliente(id_cliente):
     return jsonify(cliente.to_dict()), 200
 
 
-@clientes_bp.route("/", methods=["POST"])
+@clientes_api_bp.route("/", methods=["POST"])
 def crear_cliente():
     data = request.get_json()
 
@@ -44,7 +42,7 @@ def crear_cliente():
     return jsonify(nuevo.to_dict()), 201
 
 
-@clientes_bp.route("/<string:id_cliente>", methods=["PUT"])
+@clientes_api_bp.route("/<string:id_cliente>", methods=["PUT"])
 def actualizar_cliente(id_cliente):
     data = request.get_json()
 
@@ -58,7 +56,7 @@ def actualizar_cliente(id_cliente):
     return jsonify(cliente.to_dict()), 200
 
 
-@clientes_bp.route("/<string:id_cliente>", methods=["DELETE"])
+@clientes_api_bp.route("/<string:id_cliente>", methods=["DELETE"])
 def eliminar_cliente(id_cliente):
     resultado = cliente_service.eliminar_cliente(id_cliente)
 
@@ -78,18 +76,3 @@ def eliminar_cliente(id_cliente):
         ), 409
 
     return jsonify({"mensaje": "Cliente eliminado"}), 200
-
-
-
-@clientes_bp.route("/web/", methods=["GET"])
-def ver_clientes():
-    clientes = cliente_service.obtener_todos_los_clientes()
-    return render_template('clientes.html', clientes=clientes)
-
-
-@clientes_bp.route("/web/<string:id_cliente>", methods=["GET"])
-def ver_cliente_detalle(id_cliente):
-    cliente = cliente_service.obtener_cliente_por_id(id_cliente)
-    if cliente is None:
-        return jsonify({"error": "Cliente no encontrado"}), 404
-    return render_template('cliente_detalle.html', cliente=cliente)

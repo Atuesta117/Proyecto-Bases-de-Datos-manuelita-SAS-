@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Facturas - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Lista de Facturas</h1>
+    <a href="{{ url_for('pedidos_views.ver_pedidos') }}" class="btn btn-primary">Ir a Pedidos</a>
+</div>
+
+<div class="alert-info">
+    Para generar una factura primero debes crear un pedido y verificar su stock.
+    Una vez el pedido esté <strong>verificado</strong>, podrás facturarlo desde su detalle.
+</div>
+
+{% if facturas %}
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID Factura</th>
+                <th>Número</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Método Pago</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for factura in facturas %}
+            <tr>
+                <td>{{ factura.id_factura }}</td>
+                <td>{{ factura.numero_factura }}</td>
+                <td>{{ factura.id_cliente }}</td>
+                <td>{{ factura.fecha_generacion.strftime('%Y-%m-%d') }}</td>
+                <td>{{ factura.metodo_pago or '—' }}</td>
+                <td>${{ '{:,}'.format(factura.total_pagar) }}</td>
+                <td><span class="badge badge-{{ factura.estado }}">{{ factura.estado }}</span></td>
+                <td class="actions">
+                    <a href="{{ url_for('facturas_views.ver_factura_detalle', id_factura=factura.id_factura) }}" class="btn btn-small btn-info">Ver</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No hay facturas generadas</p>
+    <a href="{{ url_for('pedidos_views.ver_pedidos') }}" class="btn btn-primary">Ver Pedidos</a>
+</div>
+{% endif %}
+{% endblock %}

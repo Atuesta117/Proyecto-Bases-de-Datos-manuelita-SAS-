@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Pedido {{ pedido.id_pedido }} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Pedido {{ pedido.id_pedido }}</h1>
+    <div class="actions">
+        <a href="{{ url_for('pedidos_views.ver_pedidos') }}" class="btn btn-secondary">Volver</a>
+        {% if pedido.estado == 'pendiente' %}
+        <form method="POST" action="{{ url_for('pedidos_views.verificar_pedido_view', id_pedido=pedido.id_pedido) }}" style="display:inline;">
+            <button type="submit" class="btn btn-warning">Verificar stock</button>
+        </form>
+        {% endif %}
+        {% if pedido.estado == 'verificado' %}
+        <a href="{{ url_for('facturas_views.generar_factura_view', id_pedido=pedido.id_pedido) }}" class="btn btn-primary">Generar Factura</a>
+        {% endif %}
+    </div>
+</div>
+
+{% if error %}
+<div class="alert-error">{{ error }}</div>
+{% endif %}
+
+<div class="detail-card">
+    <div class="detail-section">
+        <h2>Información General</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>ID Pedido:</label>
+                <p>{{ pedido.id_pedido }}</p>
+            </div>
+            <div class="info-item">
+                <label>Estado:</label>
+                <p><span class="badge badge-{{ pedido.estado }}">{{ pedido.estado }}</span></p>
+            </div>
+            <div class="info-item">
+                <label>Cliente:</label>
+                <p>{{ cliente.nombre_razon_social if cliente else pedido.id_cliente }}</p>
+            </div>
+            <div class="info-item">
+                <label>Fecha del Pedido:</label>
+                <p>{{ pedido.fecha_pedido.strftime('%Y-%m-%d %H:%M') }}</p>
+            </div>
+            {% if pedido.observaciones %}
+            <div class="info-item">
+                <label>Observaciones:</label>
+                <p>{{ pedido.observaciones }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="detail-section">
+        <h2>Productos Solicitados</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>ID Producto</th>
+                    <th>Cantidad Solicitada</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in pedido.detalles %}
+                <tr>
+                    <td>{{ productos[detalle.id_producto].nombre if detalle.id_producto in productos else '—' }}</td>
+                    <td>{{ detalle.id_producto }}</td>
+                    <td>{{ detalle.cantidad_solicitada }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if pedido.verificacion %}
+    <div class="detail-section">
+        <h2>Verificación de Stock</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Resultado:</label>
+                <p>
+                    {% if pedido.verificacion.es_valido %}
+                    <span class="badge badge-verificado">Stock suficiente (reservado)</span>
+                    {% else %}
+                    <span class="badge badge-rechazado">Stock insuficiente</span>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="info-item">
+                <label>Fecha de Verificación:</label>
+                <p>{{ pedido.verificacion.fecha_verificacion.isoformat() }}</p>
+            </div>
+            <div class="info-item full-width">
+                <label>Observaciones:</label>
+                <p>{{ pedido.verificacion.observaciones }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

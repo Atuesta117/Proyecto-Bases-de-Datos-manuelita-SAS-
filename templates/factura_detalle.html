@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Factura {{ factura.numero_factura }} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Factura {{ factura.numero_factura }}</h1>
+    <div class="actions">
+        <a href="{{ url_for('facturas_views.ver_facturas') }}" class="btn btn-secondary">Volver</a>
+    </div>
+</div>
+
+<div class="detail-card">
+    <div class="detail-section">
+        <h2>Información General</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>ID Factura:</label>
+                <p>{{ factura.id_factura }}</p>
+            </div>
+            <div class="info-item">
+                <label>Número de Factura:</label>
+                <p>{{ factura.numero_factura }}</p>
+            </div>
+            <div class="info-item">
+                <label>Cliente:</label>
+                <p>{{ cliente.nombre_razon_social if cliente else factura.id_cliente }}</p>
+            </div>
+            <div class="info-item">
+                <label>Empresa:</label>
+                <p>{{ factura.id_empresa }}</p>
+            </div>
+            <div class="info-item">
+                <label>Fecha de Generación:</label>
+                <p>{{ factura.fecha_generacion.strftime('%Y-%m-%d %H:%M') }}</p>
+            </div>
+            <div class="info-item">
+                <label>Método de Pago:</label>
+                <p>{{ factura.metodo_pago or '—' }}</p>
+            </div>
+            <div class="info-item">
+                <label>Estado:</label>
+                <p><span class="badge badge-{{ factura.estado }}">{{ factura.estado }}</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-section">
+        <h2>Detalle de Productos</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>% IVA</th>
+                    <th>Valor IVA</th>
+                    <th>Subtotal</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in factura.detalles %}
+                <tr>
+                    <td>{{ productos[detalle.id_producto].nombre if detalle.id_producto in productos else detalle.id_producto }}</td>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td>${{ '{:,}'.format(detalle.precio_unitario) }}</td>
+                    <td>{{ detalle.porcentaje_iva }}%</td>
+                    <td>${{ '{:,}'.format(detalle.valor_iva) }}</td>
+                    <td>${{ '{:,}'.format(detalle.subtotal_item) }}</td>
+                    <td>${{ '{:,}'.format(detalle.total_item) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="detail-section">
+        <h2>Totales</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Subtotal:</label>
+                <p>${{ '{:,}'.format(factura.subtotal) }}</p>
+            </div>
+            <div class="info-item">
+                <label>IVA:</label>
+                <p>${{ '{:,}'.format(factura.valor_iva) }}</p>
+            </div>
+            <div class="info-item">
+                <label>Total a Pagar:</label>
+                <p><strong>${{ '{:,}'.format(factura.total_pagar) }}</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

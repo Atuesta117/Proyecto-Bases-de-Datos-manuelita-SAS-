@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}{% if cliente %}Editar Cliente{% else %}Nuevo Cliente{% endif %} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>{% if cliente %}Editar Cliente{% else %}Nuevo Cliente{% endif %}</h1>
+    <a href="{{ url_for('clientes.ver_clientes') }}" class="btn btn-secondary">Volver</a>
+</div>
+
+<div class="detail-card">
+    {% if error %}
+    <div class="alert-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" class="form-grid">
+
+        <div class="form-group">
+            <label for="id_cliente">ID Cliente *</label>
+            <input type="text" id="id_cliente" name="id_cliente"
+                   value="{{ cliente.id_cliente if cliente else '' }}"
+                   {% if cliente %}readonly{% endif %} required>
+        </div>
+
+        <div class="form-group">
+            <label for="tipo_documento">Tipo de Documento *</label>
+            <select id="tipo_documento" name="tipo_documento" {% if cliente %}disabled{% endif %} required>
+                <option value="CC" {% if cliente and cliente.tipo_documento == 'CC' %}selected{% endif %}>CC</option>
+                <option value="NIT" {% if cliente and cliente.tipo_documento == 'NIT' %}selected{% endif %}>NIT</option>
+                <option value="CE" {% if cliente and cliente.tipo_documento == 'CE' %}selected{% endif %}>CE</option>
+            </select>
+            {% if cliente %}
+            <input type="hidden" name="tipo_documento" value="{{ cliente.tipo_documento }}">
+            <small>No editable (dato crítico contable)</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="numero_identificacion">Número de Identificación *</label>
+            <input type="text" id="numero_identificacion" name="numero_identificacion"
+                   value="{{ cliente.numero_identificacion if cliente else '' }}"
+                   {% if cliente %}readonly{% endif %} required>
+            {% if cliente %}<small>No editable (dato crítico contable)</small>{% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="nombre_razon_social">Nombre o Razón Social *</label>
+            <input type="text" id="nombre_razon_social" name="nombre_razon_social"
+                   value="{{ cliente.nombre_razon_social if cliente else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email"
+                   value="{{ cliente.email if cliente else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="ciudad">Ciudad *</label>
+            <input type="text" id="ciudad" name="ciudad"
+                   value="{{ cliente.ciudad if cliente else 'Cali' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="num_contacto">Número de Contacto</label>
+            <input type="text" id="num_contacto" name="num_contacto"
+                   value="{{ cliente.num_contacto if cliente else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="tipo_num_contacto">Tipo de Contacto</label>
+            <select id="tipo_num_contacto" name="tipo_num_contacto">
+                <option value="">-- Selecciona --</option>
+                <option value="celular" {% if cliente and cliente.tipo_num_contacto == 'celular' %}selected{% endif %}>Celular</option>
+                <option value="telefono" {% if cliente and cliente.tipo_num_contacto == 'telefono' %}selected{% endif %}>Teléfono</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="direccion_residencia">Dirección de Residencia</label>
+            <input type="text" id="direccion_residencia" name="direccion_residencia"
+                   value="{{ cliente.direccion_residencia if cliente else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="direccion_operativa">Dirección Operativa</label>
+            <input type="text" id="direccion_operativa" name="direccion_operativa"
+                   value="{{ cliente.direccion_operativa if cliente else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="representante_legal">Representante Legal</label>
+            <input type="text" id="representante_legal" name="representante_legal"
+                   value="{{ cliente.representante_legal if cliente else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="tipo_regimen">Tipo de Régimen</label>
+            <select id="tipo_regimen" name="tipo_regimen">
+                <option value="no_responsable_iva" {% if cliente and cliente.tipo_regimen == 'no_responsable_iva' %}selected{% endif %}>No responsable de IVA</option>
+                <option value="responsable_iva" {% if cliente and cliente.tipo_regimen == 'responsable_iva' %}selected{% endif %}>Responsable de IVA</option>
+            </select>
+        </div>
+
+        <div class="form-group checkbox-group">
+            <input type="checkbox" id="habeas_data" name="habeas_data"
+                   {% if cliente and cliente.habeas_data %}checked{% endif %}>
+            <label for="habeas_data">Autoriza tratamiento de datos (Habeas Data)</label>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="{{ url_for('clientes.ver_clientes') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

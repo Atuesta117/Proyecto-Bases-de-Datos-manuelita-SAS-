@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}{{ cliente.nombre_razon_social }} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section" data-api-base="/api/clientes" data-redirect="{{ url_for('clientes.ver_clientes') }}">
+    <h1>{{ cliente.nombre_razon_social }}</h1>
+    <div class="actions">
+        <a href="{{ url_for('clientes.ver_clientes') }}" class="btn btn-secondary">Volver</a>
+        <a href="{{ url_for('clientes.editar_cliente_view', id_cliente=cliente.id_cliente) }}" class="btn btn-warning">Editar</a>
+        <a href="#" class="btn btn-danger btn-eliminar"
+           data-id="{{ cliente.id_cliente }}"
+           data-nombre="{{ cliente.nombre_razon_social }}">Eliminar</a>
+    </div>
+</div>
+
+<div class="detail-card">
+    <div class="detail-section">
+        <h2>Información General</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>ID Cliente:</label>
+                <p>{{ cliente.id_cliente }}</p>
+            </div>
+            <div class="info-item">
+                <label>Tipo de Documento:</label>
+                <p>{{ cliente.tipo_documento }}</p>
+            </div>
+            <div class="info-item">
+                <label>Número de Identificación:</label>
+                <p>{{ cliente.numero_identificacion }}</p>
+            </div>
+            <div class="info-item">
+                <label>Nombre o Razón Social:</label>
+                <p>{{ cliente.nombre_razon_social }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-section">
+        <h2>Contacto</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Email:</label>
+                <p><a href="mailto:{{ cliente.email }}">{{ cliente.email }}</a></p>
+            </div>
+            <div class="info-item">
+                <label>Ciudad:</label>
+                <p>{{ cliente.ciudad }}</p>
+            </div>
+            {% if cliente.num_contacto %}
+            <div class="info-item">
+                <label>{{ cliente.tipo_num_contacto|capitalize if cliente.tipo_num_contacto else 'Contacto' }}:</label>
+                <p>{{ cliente.num_contacto }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if cliente.direccion_residencia or cliente.direccion_operativa or cliente.representante_legal %}
+    <div class="detail-section">
+        <h2>Información Adicional</h2>
+        <div class="info-grid">
+            {% if cliente.direccion_residencia %}
+            <div class="info-item">
+                <label>Dirección de Residencia:</label>
+                <p>{{ cliente.direccion_residencia }}</p>
+            </div>
+            {% endif %}
+            {% if cliente.direccion_operativa %}
+            <div class="info-item">
+                <label>Dirección Operativa:</label>
+                <p>{{ cliente.direccion_operativa }}</p>
+            </div>
+            {% endif %}
+            {% if cliente.representante_legal %}
+            <div class="info-item">
+                <label>Representante Legal:</label>
+                <p>{{ cliente.representante_legal }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

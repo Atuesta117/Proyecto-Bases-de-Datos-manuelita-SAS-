@@ -1,16 +1,16 @@
 from flask import Blueprint, request, jsonify
 from app.services import cliente_service
 
-clientes_bp = Blueprint("clientes", __name__, url_prefix="/api/clientes")
+clientes_api_bp = Blueprint("clientes_api", __name__, url_prefix="/api/clientes")
 
 
-@clientes_bp.route("/", methods=["GET"])
+@clientes_api_bp.route("/", methods=["GET"])
 def listar_clientes():
     clientes = cliente_service.obtener_todos_los_clientes()
     return jsonify([c.to_dict() for c in clientes]), 200
 
 
-@clientes_bp.route("/<string:id_cliente>", methods=["GET"])
+@clientes_api_bp.route("/<string:id_cliente>", methods=["GET"])
 def obtener_cliente(id_cliente):
     cliente = cliente_service.obtener_cliente_por_id(id_cliente)
     if cliente is None:
@@ -18,7 +18,7 @@ def obtener_cliente(id_cliente):
     return jsonify(cliente.to_dict()), 200
 
 
-@clientes_bp.route("/", methods=["POST"])
+@clientes_api_bp.route("/", methods=["POST"])
 def crear_cliente():
     data = request.get_json()
 
@@ -36,22 +36,27 @@ def crear_cliente():
 
     try:
         nuevo = cliente_service.crear_cliente(data)
-    except Exception as e:
+    except (ValueError, Exception) as e:
         return jsonify({"error": str(e)}), 400
 
     return jsonify(nuevo.to_dict()), 201
 
 
-@clientes_bp.route("/<string:id_cliente>", methods=["PUT"])
+@clientes_api_bp.route("/<string:id_cliente>", methods=["PUT"])
 def actualizar_cliente(id_cliente):
     data = request.get_json()
-    cliente = cliente_service.actualizar_cliente(id_cliente, data)
+
+    try:
+        cliente = cliente_service.actualizar_cliente(id_cliente, data)
+    except (ValueError, Exception) as e:
+        return jsonify({"error": str(e)}), 400
+
     if cliente is None:
         return jsonify({"error": "Cliente no encontrado"}), 404
     return jsonify(cliente.to_dict()), 200
 
 
-@clientes_bp.route("/<string:id_cliente>", methods=["DELETE"])
+@clientes_api_bp.route("/<string:id_cliente>", methods=["DELETE"])
 def eliminar_cliente(id_cliente):
     resultado = cliente_service.eliminar_cliente(id_cliente)
 
@@ -60,6 +65,14 @@ def eliminar_cliente(id_cliente):
     if resultado == "tiene_facturas":
         return jsonify(
             {"error": "No se puede eliminar: el cliente tiene facturas asociadas"}
+        ), 409
+    if resultado == "tiene_pedidos":
+        return jsonify(
+            {"error": "No se puede eliminar: el cliente tiene pedidos asociados"}
+        ), 409
+    if resultado == "tiene_registros_asociados":
+        return jsonify(
+            {"error": "No se puede eliminar: el cliente tiene registros asociados"}
         ), 409
 
     return jsonify({"mensaje": "Cliente eliminado"}), 200

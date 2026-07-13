@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}{{ proveedor.nombre_razon_social }} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section" data-api-base="/api/proveedores" data-redirect="{{ url_for('proveedores.ver_proveedores') }}">
+    <h1>{{ proveedor.nombre_razon_social }}</h1>
+    <div class="actions">
+        <a href="{{ url_for('proveedores.ver_proveedores') }}" class="btn btn-secondary">Volver</a>
+        <a href="{{ url_for('proveedores.editar_proveedor_view', id_proveedor=proveedor.id_proveedor) }}" class="btn btn-warning">Editar</a>
+        <a href="#" class="btn btn-danger btn-eliminar"
+           data-id="{{ proveedor.id_proveedor }}"
+           data-nombre="{{ proveedor.nombre_razon_social }}">Eliminar</a>
+    </div>
+</div>
+
+<div class="detail-card">
+    <div class="detail-section">
+        <h2>Información General</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>ID Proveedor:</label>
+                <p>{{ proveedor.id_proveedor }}</p>
+            </div>
+            <div class="info-item">
+                <label>Tipo de Documento:</label>
+                <p>{{ proveedor.tipo_documento }}</p>
+            </div>
+            <div class="info-item">
+                <label>Número de Identificación:</label>
+                <p>{{ proveedor.numero_identificacion }}</p>
+            </div>
+            <div class="info-item">
+                <label>Nombre o Razón Social:</label>
+                <p>{{ proveedor.nombre_razon_social }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-section">
+        <h2>Contacto</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Email:</label>
+                <p><a href="mailto:{{ proveedor.email }}">{{ proveedor.email }}</a></p>
+            </div>
+            <div class="info-item">
+                <label>RUT:</label>
+                <p>{{ proveedor.rut }}</p>
+            </div>
+            {% if proveedor.num_contacto %}
+            <div class="info-item">
+                <label>{{ proveedor.tipo_num_contacto|capitalize if proveedor.tipo_num_contacto else 'Contacto' }}:</label>
+                <p>{{ proveedor.num_contacto }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="detail-section">
+        <h2>Información Comercial</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Tipo de Proveedor:</label>
+                <p>{{ proveedor.tipo_proveedor }}</p>
+            </div>
+            <div class="info-item">
+                <label>Tiempo de Entrega Promedio:</label>
+                <p>{{ proveedor.tiempo_entrega_promedio }} días</p>
+            </div>
+            <div class="info-item">
+                <label>Condiciones de Pago:</label>
+                <p>{{ proveedor.condiciones_pago }} días</p>
+            </div>
+            <div class="info-item">
+                <label>Calificación:</label>
+                <p>{{ proveedor.calificacion }} / 5</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

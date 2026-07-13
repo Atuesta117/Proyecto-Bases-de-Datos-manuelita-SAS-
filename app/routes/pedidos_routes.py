@@ -1,16 +1,16 @@
 from flask import Blueprint, request, jsonify
 from app.services import pedido_service
 
-pedidos_bp = Blueprint("pedidos", __name__, url_prefix="/api/pedidos")
+pedidos_api_bp = Blueprint("pedidos", __name__, url_prefix="/api/pedidos")
 
 
-@pedidos_bp.route("/", methods=["GET"])
+@pedidos_api_bp.route("/", methods=["GET"])
 def listar_pedidos():
     pedidos = pedido_service.obtener_todos_los_pedidos()
     return jsonify([p.to_dict() for p in pedidos]), 200
 
 
-@pedidos_bp.route("/<string:id_pedido>", methods=["GET"])
+@pedidos_api_bp.route("/<string:id_pedido>", methods=["GET"])
 def obtener_pedido(id_pedido):
     pedido = pedido_service.obtener_pedido_por_id(id_pedido)
     if not pedido:
@@ -18,7 +18,7 @@ def obtener_pedido(id_pedido):
     return jsonify(pedido.to_dict()), 200
 
 
-@pedidos_bp.route("/", methods=["POST"])
+@pedidos_api_bp.route("/", methods=["POST"])
 def registrar_pedido():
     data = request.get_json()
     campos = ["id_pedido", "id_cliente", "items"]
@@ -34,7 +34,7 @@ def registrar_pedido():
         return jsonify({"error": str(e)}), 400
 
 
-@pedidos_bp.route("/<string:id_pedido>/verificar", methods=["POST"])
+@pedidos_api_bp.route("/<string:id_pedido>/verificar", methods=["POST"])
 def verificar_pedido(id_pedido):
     """El sistema revisa stock disponible (por lote, FEFO) para cada producto del pedido"""
     data = request.get_json() or {}

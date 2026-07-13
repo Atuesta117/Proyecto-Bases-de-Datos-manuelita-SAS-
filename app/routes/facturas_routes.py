@@ -2,16 +2,16 @@ from flask import Blueprint, request, jsonify
 from app.services import factura_service
 from app.models.factura import Factura
 
-facturas_bp = Blueprint("facturas", __name__, url_prefix="/api/facturas")
+facturas_api_bp = Blueprint("facturas", __name__, url_prefix="/api/facturas")
 
 
-@facturas_bp.route("/", methods=["GET"])
+@facturas_api_bp.route("/", methods=["GET"])
 def listar_facturas():
     facturas = Factura.query.all()
     return jsonify([f.to_dict() for f in facturas]), 200
 
 
-@facturas_bp.route("/<string:id_factura>", methods=["GET"])
+@facturas_api_bp.route("/<string:id_factura>", methods=["GET"])
 def obtener_factura(id_factura):
     factura = Factura.query.get(id_factura)
     if not factura:
@@ -19,7 +19,7 @@ def obtener_factura(id_factura):
     return jsonify(factura.to_dict()), 200
 
 
-@facturas_bp.route("/pedidos/<string:id_pedido>/confirmar", methods=["POST"])
+@facturas_api_bp.route("/pedidos/<string:id_pedido>/confirmar", methods=["POST"])
 def confirmar_pedido(id_pedido):
     """
     Endpoint clave: toma un pedido en estado 'verificado', genera su

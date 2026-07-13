@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Proveedores - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Lista de Proveedores</h1>
+    <a href="#" class="btn btn-primary">+ Nuevo Proveedor</a>
+</div>
+
+{% if proveedores %}
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID Proveedor</th>
+                <th>Nombre</th>
+                <th>Tipo Documento</th>
+                <th>Número Identificación</th>
+                <th>Email</th>
+                <th>RUT</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for proveedor in proveedores %}
+            <tr>
+                <td>{{ proveedor.id_proveedor }}</td>
+                <td>{{ proveedor.nombre_razon_social }}</td>
+                <td>{{ proveedor.tipo_documento }}</td>
+                <td>{{ proveedor.numero_identificacion }}</td>
+                <td>{{ proveedor.email }}</td>
+                <td>{{ proveedor.rut }}</td>
+                <td class="actions">
+                    <a href="{{ url_for('proveedores.ver_proveedor_detalle', id_proveedor=proveedor.id_proveedor) }}" class="btn btn-small btn-info">Ver</a>
+                    <a href="#" class="btn btn-small btn-warning">Editar</a>
+                    <a href="#" class="btn btn-small btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No hay proveedores registrados</p>
+    <a href="#" class="btn btn-primary">+ Crear Primer Proveedor</a>
+</div>
+{% endif %}
+{% endblock %}

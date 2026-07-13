@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}{{ proveedor.nombre_razon_social }} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>{{ proveedor.nombre_razon_social }}</h1>
+    <div class="actions">
+        <a href="{{ url_for('proveedores.ver_proveedores') }}" class="btn btn-secondary">Volver</a>
+        <a href="#" class="btn btn-warning">Editar</a>
+        <a href="#" class="btn btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</a>
+    </div>
+</div>
+
+<div class="detail-card">
+    <div class="detail-section">
+        <h2>Información General</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>ID Proveedor:</label>
+                <p>{{ proveedor.id_proveedor }}</p>
+            </div>
+            <div class="info-item">
+                <label>Tipo de Documento:</label>
+                <p>{{ proveedor.tipo_documento }}</p>
+            </div>
+            <div class="info-item">
+                <label>Número de Identificación:</label>
+                <p>{{ proveedor.numero_identificacion }}</p>
+            </div>
+            <div class="info-item">
+                <label>Nombre o Razón Social:</label>
+                <p>{{ proveedor.nombre_razon_social }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-section">
+        <h2>Contacto</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Email:</label>
+                <p><a href="mailto:{{ proveedor.email }}">{{ proveedor.email }}</a></p>
+            </div>
+            <div class="info-item">
+                <label>RUT:</label>
+                <p>{{ proveedor.rut }}</p>
+            </div>
+        </div>
+    </div>
+
+    {% if proveedor.telefono %}
+    <div class="detail-section">
+        <h2>Información Adicional</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Teléfono:</label>
+                <p>{{ proveedor.telefono }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

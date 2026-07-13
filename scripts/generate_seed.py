@@ -19,16 +19,17 @@ random.seed(42)  # reproducible
 # ------------------------------------------------------------------ #
 # Parámetros de volumen ("Grande / realista")
 # ------------------------------------------------------------------ #
-N_CLIENTES   = 500
+N_CLIENTES = 500
 N_PROVEEDORES = 200
-N_SEDES      = 50
-N_PRODUCTOS  = 500
-N_ORDENES    = 2000
-N_PEDIDOS    = 2000
-N_CAMIONES   = 60
+N_SEDES = 10
+N_PRODUCTOS = 500
+N_ORDENES = 2000
+N_PEDIDOS = 2000
+N_CAMIONES = 60
 N_CONDUCTORES = 80
 
 TODAY = date(2026, 7, 13)
+
 
 # ------------------------------------------------------------------ #
 # Utilidades
@@ -39,50 +40,123 @@ def esc(s):
         return "NULL"
     return "'" + str(s).replace("'", "''") + "'"
 
+
 def num(n):
     if n is None:
         return "NULL"
     return str(n)
 
+
 def b(v):
     return "TRUE" if v else "FALSE"
+
 
 def rand_date(start, end):
     delta = (end - start).days
     return start + timedelta(days=random.randint(0, max(delta, 0)))
 
-CIUDADES = ["Cali", "Bogotá", "Medellín", "Barranquilla", "Cartagena",
-            "Bucaramanga", "Pereira", "Manizales", "Cúcuta", "Ibagué"]
+
+CIUDADES = [
+    "Cali",
+    "Bogotá",
+    "Medellín",
+    "Barranquilla",
+    "Cartagena",
+    "Bucaramanga",
+    "Pereira",
+    "Manizales",
+    "Cúcuta",
+    "Ibagué",
+]
 DEPARTAMENTOS = {
-    "Cali": "Valle del Cauca", "Bogotá": "Cundinamarca", "Medellín": "Antioquia",
-    "Barranquilla": "Atlántico", "Cartagena": "Bolívar", "Bucaramanga": "Santander",
-    "Pereira": "Risaralda", "Manizales": "Caldas", "Cúcuta": "Norte de Santander",
+    "Cali": "Valle del Cauca",
+    "Bogotá": "Cundinamarca",
+    "Medellín": "Antioquia",
+    "Barranquilla": "Atlántico",
+    "Cartagena": "Bolívar",
+    "Bucaramanga": "Santander",
+    "Pereira": "Risaralda",
+    "Manizales": "Caldas",
+    "Cúcuta": "Norte de Santander",
     "Ibagué": "Tolima",
 }
-BANCOS = ["Bancolombia", "BBVA", "Banco de Bogotá", "Davivienda", "Banco Popular", "Nequi"]
-CATEGORIAS = ["Lácteos", "Bebidas", "Snacks", "Aseo", "Panadería",
-              "Congelados", "Enlatados", "Granos", "Condimentos", "Cárnicos"]
+BANCOS = [
+    "Bancolombia",
+    "BBVA",
+    "Banco de Bogotá",
+    "Davivienda",
+    "Banco Popular",
+    "Nequi",
+]
+CATEGORIAS = [
+    "Lácteos",
+    "Bebidas",
+    "Snacks",
+    "Aseo",
+    "Panadería",
+    "Congelados",
+    "Enlatados",
+    "Granos",
+    "Condimentos",
+    "Cárnicos",
+]
 UNIDADES = ["g", "kg", "l", "ml", "galon"]
 MARCAS_CAMION = ["Chevrolet", "Hino", "Foton", "JAC", "Kenworth", "Freightliner"]
-NOMBRES = ["Carlos", "Ana", "Luis", "María", "Jorge", "Sofía", "Andrés", "Laura",
-           "Diego", "Camila", "Julián", "Valentina", "Felipe", "Daniela"]
-APELLIDOS = ["Gómez", "Rodríguez", "Martínez", "López", "García", "Pérez",
-             "Torres", "Ramírez", "Vargas", "Cruz", "Ruiz", "Sánchez"]
+NOMBRES = [
+    "Carlos",
+    "Ana",
+    "Luis",
+    "María",
+    "Jorge",
+    "Sofía",
+    "Andrés",
+    "Laura",
+    "Diego",
+    "Camila",
+    "Julián",
+    "Valentina",
+    "Felipe",
+    "Daniela",
+]
+APELLIDOS = [
+    "Gómez",
+    "Rodríguez",
+    "Martínez",
+    "López",
+    "García",
+    "Pérez",
+    "Torres",
+    "Ramírez",
+    "Vargas",
+    "Cruz",
+    "Ruiz",
+    "Sánchez",
+]
 TRANSPORTADORAS = ["Servientrega", "Coordinadora", "TCC", "Envía", "Interrapidísimo"]
 PAISES = ["Estados Unidos", "México", "Ecuador", "Perú", "España", "Panamá", "Chile"]
 DIVISAS = ["USD", "EUR", "MXN", "PEN"]
 
-def cli_id(i):  return f"CLI-{i:06d}"
-def prov_id(i): return f"PROV-{i:06d}"
+
+def cli_id(i):
+    return f"CLI-{i:06d}"
+
+
+def prov_id(i):
+    return f"PROV-{i:06d}"
+
 
 lines = []
+
+
 def emit(sql):
     lines.append(sql)
+
 
 def section(title):
     emit(f"\n-- ============================================================")
     emit(f"-- {title}")
     emit(f"-- ============================================================")
+
 
 emit("-- seed.sql  -- Datos generados automáticamente (PostgreSQL)")
 emit("-- Complementa CLIENTES (500) y PROVEEDORES (200) ya insertados.")
@@ -99,8 +173,10 @@ tipos_iva = [
     ("IVA-000004", "General", 19.00),
 ]
 for tid, nombre, pct in tipos_iva:
-    emit(f"INSERT INTO TIPOS_IVA (id_tipo_iva, nombre, porcentaje) VALUES "
-         f"({esc(tid)}, {esc(nombre)}, {pct});")
+    emit(
+        f"INSERT INTO TIPOS_IVA (id_tipo_iva, nombre, porcentaje) VALUES "
+        f"({esc(tid)}, {esc(nombre)}, {pct});"
+    )
 iva_ids = [t[0] for t in tipos_iva]
 iva_pct = {t[0]: t[2] for t in tipos_iva}
 
@@ -129,14 +205,14 @@ for i in range(1, N_SEDES + 1):
     sede_ids.append(sid)
     ciudad = random.choice(CIUDADES)
     tipo = "administrativa" if i == 1 else random.choice(tipos_sede)
-    es_principal = (i == 1)
+    es_principal = i == 1
     fecha = rand_date(date(2018, 1, 1), date(2024, 12, 31))
     emit(
         "INSERT INTO SEDES (id_sede, id_empresa, nombre_sede, tipo_sede, ciudad, "
         "direccion, telefono, es_principal, fecha_apertura) VALUES ("
         f"{esc(sid)}, {esc(EMPRESA_ID)}, {esc(f'Sede {ciudad} {i}')}, {esc(tipo)}, "
-        f"{esc(ciudad)}, {esc(f'Cra. {random.randint(1,120)} # {random.randint(1,99)}-{random.randint(1,99)}')}, "
-        f"{esc(f'60{random.randint(2,8)}{random.randint(1000000,9999999)}')}, "
+        f"{esc(ciudad)}, {esc(f'Cra. {random.randint(1, 120)} # {random.randint(1, 99)}-{random.randint(1, 99)}')}, "
+        f"{esc(f'60{random.randint(2, 8)}{random.randint(1000000, 9999999)}')}, "
         f"{b(es_principal)}, {esc(fecha.isoformat())});"
     )
 
@@ -146,7 +222,7 @@ for i in range(1, N_SEDES + 1):
 section("PRODUCTOS")
 producto_ids = []
 producto_precio = {}
-producto_iva = {}     # id_producto -> id_tipo_iva
+producto_iva = {}  # id_producto -> id_tipo_iva
 for i in range(1, N_PRODUCTOS + 1):
     pid = f"PROD-{i:06d}"
     producto_ids.append(pid)
@@ -224,6 +300,7 @@ section("LOTES")
 lotes_por_producto = {}  # id_producto -> [id_lote,...]
 lote_counter = 0
 
+
 def add_lote(pid, id_prov, id_sede, id_detalle_orden):
     global lote_counter
     lote_counter += 1
@@ -242,8 +319,9 @@ def add_lote(pid, id_prov, id_sede, id_detalle_orden):
     )
     lotes_por_producto.setdefault(pid, []).append(lid)
 
+
 # Un lote por cada detalle de orden recibida (vinculado a la orden)
-for (did, pid, id_prov, id_sede) in detalle_orden_recibidos:
+for did, pid, id_prov, id_sede in detalle_orden_recibidos:
     add_lote(pid, id_prov, id_sede, did)
 
 # Garantizar que TODO producto tenga al menos un lote (sin detalle_orden -> NULL)
@@ -292,7 +370,7 @@ for i in range(1, N_PEDIDOS + 1):
 section("DETALLE_PEDIDO_LOTE")
 asig_counter = 0
 for pid_ped, dets in detalle_pedido_por_pedido.items():
-    for (did, pid, cantidad) in dets:
+    for did, pid, cantidad in dets:
         lotes = lotes_por_producto.get(pid)
         if not lotes:
             continue
@@ -308,7 +386,7 @@ for pid_ped, dets in detalle_pedido_por_pedido.items():
 # VERIFICAR_PEDIDO (1 por pedido verificado/confirmado/rechazado)
 # ------------------------------------------------------------------ #
 section("VERIFICAR_PEDIDO")
-verificacion_de_pedido = {}   # id_pedido -> (id_verificacion, esValido)
+verificacion_de_pedido = {}  # id_pedido -> (id_verificacion, esValido)
 ver_counter = 0
 for pid_ped, estado in pedido_estado.items():
     if estado in ("verificado", "confirmado", "rechazado"):
@@ -333,7 +411,7 @@ metodos_pago = ["efectivo", "tarjeta", "transferencia", "contraentrega"]
 fact_counter = 0
 det_fact_counter = 0
 conf_counter = 0
-confirmaciones = []   # (id_confirmacion, id_factura, id_cliente, fecha)
+confirmaciones = []  # (id_confirmacion, id_factura, id_cliente, fecha)
 for pid_ped, estado in pedido_estado.items():
     if estado != "confirmado":
         continue
@@ -350,7 +428,7 @@ for pid_ped, estado in pedido_estado.items():
     subtotal = 0
     total_iva = 0
     item_rows = []
-    for (did, pid, cantidad) in dets:
+    for did, pid, cantidad in dets:
         precio = producto_precio[pid]
         pct = iva_pct[producto_iva[pid]]
         sub_item = precio * cantidad
@@ -398,17 +476,21 @@ for pid_ped, estado in pedido_estado.items():
 # CAMION
 # ------------------------------------------------------------------ #
 section("CAMION")
-camiones_por_sede = {}   # id_sede -> [id_camion]
+camiones_por_sede = {}  # id_sede -> [id_camion]
 camion_ids = []
 estados_camion = ["disponible", "en_ruta", "mantenimiento", "fuera_de_servicio"]
 placas_seen = set()
+
+
 def gen_placa():
     L = "ABCDEFGHJKLMNP"
     while True:
-        p = f"{random.choice(L)}{random.choice(L)}{random.choice(L)}{random.randint(100,999)}"
+        p = f"{random.choice(L)}{random.choice(L)}{random.choice(L)}{random.randint(100, 999)}"
         if p not in placas_seen:
             placas_seen.add(p)
             return p
+
+
 for i in range(1, N_CAMIONES + 1):
     cid = f"CAM-{i:06d}"
     camion_ids.append(cid)
@@ -430,12 +512,16 @@ section("CONDUCTOR")
 conductor_ids = []
 ced_seen = set()
 lic_seen = set()
+
+
 def gen_unique(seen, fn):
     while True:
         v = fn()
         if v not in seen:
             seen.add(v)
             return v
+
+
 for i in range(1, N_CONDUCTORES + 1):
     cid = f"COND-{i:06d}"
     conductor_ids.append(cid)
@@ -482,7 +568,7 @@ estados_envio = ["preparando", "en_camino", "entregado", "devuelto"]
 env_counter = 0
 asigc_counter = 0
 tracking_seen = set()
-for (cfid, fid, id_cli, fecha_conf) in confirmaciones:
+for cfid, fid, id_cli, fecha_conf in confirmaciones:
     env_counter += 1
     eid = f"ENV-{env_counter:06d}"
     id_sede_origen = random.choice(sede_ids)
@@ -494,7 +580,7 @@ for (cfid, fid, id_cli, fecha_conf) in confirmaciones:
         "INSERT INTO ENVIOS (id_envio, id_pedido_confirmado, id_sede_origen, direccion_origen, "
         "direccion_destino, fecha_envio, fecha_entrega_estimada, estado_envio, tipo_envio) VALUES ("
         f"{esc(eid)}, {esc(cfid)}, {esc(id_sede_origen)}, {esc('Bodega central Cali')}, "
-        f"{esc(f'Cra. {random.randint(1,120)} # {random.randint(1,99)}-{random.randint(1,99)}, {ciudad_dest}')}, "
+        f"{esc(f'Cra. {random.randint(1, 120)} # {random.randint(1, 99)}-{random.randint(1, 99)}, {ciudad_dest}')}, "
         f"{esc(fecha_envio.isoformat())}, {esc(fecha_est.isoformat())}, "
         f"{esc(random.choice(estados_envio))}, {esc(tipo)});"
     )
@@ -537,6 +623,12 @@ print(f"seed.sql generado: {len(lines)} lineas")
 print(f"  TIPOS_IVA={len(tipos_iva)} EMPRESA=1 SEDES={N_SEDES} PRODUCTOS={N_PRODUCTOS}")
 print(f"  STOCK={N_PRODUCTOS} ORDENES={N_ORDENES} DETALLE_ORDEN={det_orden_counter}")
 print(f"  LOTES={lote_counter} PEDIDOS={N_PEDIDOS} DETALLE_PEDIDO={det_pedido_counter}")
-print(f"  VERIFICACIONES={ver_counter} FACTURAS={fact_counter} DETALLE_FACTURA={det_fact_counter}")
-print(f"  CONFIRMACIONES={conf_counter} ENVIOS={env_counter} ASIGNACIONES={asigc_counter}")
-print(f"  CAMIONES={N_CAMIONES} CONDUCTORES={N_CONDUCTORES} CAMION_CONDUCTOR={cc_counter}")
+print(
+    f"  VERIFICACIONES={ver_counter} FACTURAS={fact_counter} DETALLE_FACTURA={det_fact_counter}"
+)
+print(
+    f"  CONFIRMACIONES={conf_counter} ENVIOS={env_counter} ASIGNACIONES={asigc_counter}"
+)
+print(
+    f"  CAMIONES={N_CAMIONES} CONDUCTORES={N_CONDUCTORES} CAMION_CONDUCTOR={cc_counter}"
+)

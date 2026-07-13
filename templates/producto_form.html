@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if producto else 'Nuevo' }} Producto - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>{{ 'Editar Producto' if producto else 'Nuevo Producto / Insumo' }}</h1>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+{% if not proveedores %}
+<div class="alert alert-warning">
+    No hay proveedores registrados. Debes <a href="{{ url_for('proveedores.crear_proveedor_view') }}">crear un proveedor</a>
+    antes de poder registrar un producto o insumo (restricción de integridad referencial).
+</div>
+{% endif %}
+
+<form method="POST" class="form">
+    <fieldset>
+        <legend>Datos del Producto</legend>
+
+        <div class="form-group">
+            <label for="id_producto">ID Producto / Código de barras</label>
+            <input type="text" id="id_producto" name="id_producto" class="form-control"
+                   value="{{ producto.id_producto if producto else '' }}"
+                   {% if producto %}readonly{% endif %} required>
+            {% if producto %}
+            <small class="form-text">El ID no se puede modificar (consistencia histórica contable).</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_proveedor">Proveedor</label>
+            <select id="id_proveedor" name="id_proveedor" class="form-control"
+                    {% if producto %}disabled{% endif %} required>
+                <option value="">-- Seleccione un proveedor registrado --</option>
+                {% for prov in proveedores %}
+                <option value="{{ prov.id_proveedor }}"
+                    {% if producto and producto.id_proveedor == prov.id_proveedor %}selected
+                    {% endif %}>
+                    {{ prov.nombre_razon_social }} ({{ prov.id_proveedor }})
+                </option>
+                {% endfor %}
+            </select>
+            {% if producto %}
+            <!-- Reenviamos el valor real porque un <select disabled> no se envía en el POST -->
+            <input type="hidden" name="id_proveedor" value="{{ producto.id_proveedor }}">
+            <small class="form-text">El proveedor no se puede modificar (consistencia histórica contable).</small>
+            {% else %}
+            <small class="form-text">No se pueden registrar productos de proveedores no registrados previamente.</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="nombre">Nombre del Insumo/Producto</label>
+            <input type="text" id="nombre" name="nombre" class="form-control"
+                   value="{{ producto.nombre if producto else '' }}"
+                   placeholder="ej. Resina Epóxica" required>
+        </div>
+
+        <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" name="descripcion" class="form-control">{{ producto.descripcion if producto else '' }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="categoria">Categoría</label>
+            <input type="text" id="categoria" name="categoria" class="form-control"
+                   value="{{ producto.categoria if producto else '' }}"
+                   placeholder="ej. Materia prima, Empaques" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="precio">Precio</label>
+                <input type="number" step="0.01" min="0" id="precio" name="precio" class="form-control"
+                       value="{{ producto.precio if producto else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="peso">Peso</label>
+                <input type="number" step="0.01" min="0" id="peso" name="peso" class="form-control"
+                       value="{{ producto.peso if producto else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="unidad_medida">Unidad de Medida</label>
+                <input type="text" id="unidad_medida" name="unidad_medida" class="form-control"
+                       value="{{ producto.unidad_medida if producto else '' }}"
+                       placeholder="ej. kg, unidad, litro">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="id_tipo_iva">Tipo de IVA</label>
+            <select id="id_tipo_iva" name="id_tipo_iva" class="form-control" required>
+                <option value="">-- Seleccione --</option>
+                <option value="general" {% if producto and producto.id_tipo_iva == 'general' %}selected{% endif %}>General (19%)</option>
+                <option value="diferencial" {% if producto and producto.id_tipo_iva == 'diferencial' %}selected{% endif %}>Diferencial (5%)</option>
+                <option value="exento" {% if producto and producto.id_tipo_iva == 'exento' %}selected{% endif %}>Exento (0%)</option>
+                <option value="excluido" {% if producto and producto.id_tipo_iva == 'excluido' %}selected{% endif %}>Excluido</option>
+            </select>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Datos de Stock</legend>
+        <p class="form-text">
+            El estado del inventario (Días de Stock, Categoría y Acción Recomendada) se
+            calcula automáticamente a partir de estos valores y nunca se almacena.
+        </p>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="inventario_actual">Inventario Actual</label>
+                <input type="number" min="0" id="inventario_actual" name="inventario_actual" class="form-control"
+                       value="{{ producto.stock.cantidad_disponible if producto and producto.stock else 0 }}">
+            </div>
+
+            <div class="form-group">
+                <label for="demanda_diaria">Demanda Diaria</label>
+                <input type="number" step="0.01" min="0" id="demanda_diaria" name="demanda_diaria" class="form-control"
+                       value="{{ producto.stock.demanda_diaria if producto and producto.stock else 0 }}">
+            </div>
+
+            <div class="form-group">
+                <label for="stock_minimo">Stock Mínimo</label>
+                <input type="number" min="0" id="stock_minimo" name="stock_minimo" class="form-control"
+                       value="{{ producto.stock.stock_minimo if producto and producto.stock else 10 }}">
+            </div>
+        </div>
+    </fieldset>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{{ url_for('productos.ver_productos') }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

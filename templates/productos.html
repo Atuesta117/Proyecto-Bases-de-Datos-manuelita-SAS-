@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Productos - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Lista de Productos / Insumos</h1>
+    <a href="{{ url_for('productos.crear_producto_view') }}" class="btn btn-primary">+ Nuevo Producto</a>
+</div>
+
+{% if productos %}
+<div class="table-responsive" data-api-base="/api/productos">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID Producto</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Inventario Actual</th>
+                <th>Días de Stock</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in productos %}
+            {% set producto = item.producto %}
+            {% set estado = item.estado %}
+            <tr>
+                <td>{{ producto.id_producto }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.categoria }}</td>
+                <td>${{ "%.2f"|format(producto.precio) }}</td>
+                <td>{{ item.cantidad_disponible }}</td>
+                <td>
+                    {% if estado.dias_stock is not none %}
+                        {{ estado.dias_stock }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge badge-{{ estado.categoria_slug }}"
+                          title="{{ estado.accion }}">
+                        {{ estado.categoria }}
+                    </span>
+                </td>
+                <td class="actions">
+                    <a href="{{ url_for('productos.ver_producto_detalle', id_producto=producto.id_producto) }}" class="btn btn-small btn-info">Ver</a>
+                    <a href="{{ url_for('productos.editar_producto_view', id_producto=producto.id_producto) }}" class="btn btn-small btn-warning">Editar</a>
+                    <a href="#" class="btn btn-small btn-danger btn-eliminar"
+                       data-id="{{ producto.id_producto }}"
+                       data-nombre="{{ producto.nombre }}">Inactivar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!--
+  Nota: "Inactivar" hace una eliminación lógica (activo=False), no un DELETE
+  físico, para conservar el histórico de movimientos de inventario tal como
+  pide la guía. El manejo del click (llamada DELETE a /api/productos/<id>)
+  se hace con el mismo script global que usa data-api-base en la tabla de
+  proveedores.
+-->
+
+{% else %}
+<div class="empty-state">
+    <p>No hay productos registrados</p>
+    <a href="{{ url_for('productos.crear_producto_view') }}" class="btn btn-primary">+ Crear Primer Producto</a>
+</div>
+{% endif %}
+
+<style>
+    .badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #fff;
+    }
+    .badge-agotado { background-color: #b00020; }
+    .badge-critico { background-color: #e53935; }
+    .badge-alerta { background-color: #f9a825; color: #222; }
+    .badge-seguro { background-color: #2e7d32; }
+    .badge-sin-demanda { background-color: #9e9e9e; }
+</style>
+{% endblock %}

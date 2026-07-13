@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}{{ producto.nombre }} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>{{ producto.nombre }}</h1>
+    <div class="header-actions">
+        <a href="{{ url_for('productos.editar_producto_view', id_producto=producto.id_producto) }}" class="btn btn-warning">Editar</a>
+        <a href="{{ url_for('productos.ver_productos') }}" class="btn btn-secondary">Volver</a>
+    </div>
+</div>
+
+<div class="detail-card">
+    <table class="table table-detail">
+        <tr><th>ID Producto</th><td>{{ producto.id_producto }}</td></tr>
+        <tr><th>Proveedor</th><td>{{ producto.id_proveedor }}</td></tr>
+        <tr><th>Categoría</th><td>{{ producto.categoria }}</td></tr>
+        <tr><th>Descripción</th><td>{{ producto.descripcion or '—' }}</td></tr>
+        <tr><th>Precio</th><td>${{ "%.2f"|format(producto.precio) }}</td></tr>
+        <tr><th>Peso</th><td>{{ producto.peso }} {{ producto.unidad_medida or '' }}</td></tr>
+        <tr><th>Tipo IVA</th><td>{{ producto.id_tipo_iva }}</td></tr>
+        <tr><th>Estado</th><td>{{ 'Activo' if producto.activo else 'Inactivo' }}</td></tr>
+    </table>
+</div>
+
+<div class="detail-card">
+    <h2>Estado del Inventario</h2>
+    <table class="table table-detail">
+        <tr><th>Inventario Actual</th><td>{{ stock.cantidad_disponible if stock else 0 }}</td></tr>
+        <tr><th>Demanda Diaria</th><td>{{ stock.demanda_diaria if stock else 0 }}</td></tr>
+        <tr><th>Stock Mínimo</th><td>{{ stock.stock_minimo if stock else 0 }}</td></tr>
+        <tr>
+            <th>Días de Stock</th>
+            <td>{{ estado.dias_stock if estado.dias_stock is not none else 'N/A' }}</td>
+        </tr>
+        <tr>
+            <th>Categoría</th>
+            <td><span class="badge badge-{{ estado.categoria_slug }}">{{ estado.categoria }}</span></td>
+        </tr>
+        <tr><th>Acción Recomendada</th><td>{{ estado.accion }}</td></tr>
+    </table>
+    <p class="form-text">
+        Días de Stock = Inventario Actual / Demanda Diaria. Este valor se calcula en
+        cada consulta y no se almacena junto con el producto/insumo.
+    </p>
+</div>
+
+<div class="detail-card">
+    <h2>Lotes Activos</h2>
+    {% if lotes %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID Lote</th>
+                <th>Proveedor</th>
+                <th>Sede</th>
+                <th>Fecha Ingreso</th>
+                <th>Fecha Vencimiento</th>
+                <th>Cantidad Inicial</th>
+                <th>Cantidad Actual</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lote in lotes %}
+            <tr>
+                <td>{{ lote.id_lote }}</td>
+                <td>{{ lote.id_proveedor }}</td>
+                <td>{{ lote.id_sede }}</td>
+                <td>{{ lote.fecha_ingreso }}</td>
+                <td>{{ lote.fecha_vencimiento }}</td>
+                <td>{{ lote.cantidad_inicial }}</td>
+                <td>{{ lote.cantidad_actual }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No hay lotes activos para este producto.</p>
+    {% endif %}
+</div>
+
+<style>
+    .badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #fff;
+    }
+    .badge-agotado { background-color: #b00020; }
+    .badge-critico { background-color: #e53935; }
+    .badge-alerta { background-color: #f9a825; color: #222; }
+    .badge-seguro { background-color: #2e7d32; }
+    .badge-sin-demanda { background-color: #9e9e9e; }
+    .detail-card { margin-bottom: 24px; }
+</style>
+{% endblock %}

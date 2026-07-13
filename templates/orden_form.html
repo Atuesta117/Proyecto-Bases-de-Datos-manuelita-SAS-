@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Orden de Pedido - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Generar Órden de Pedido</h1>
+<a href="{{ url_for('ordenes_vistas.ver_ordenes') }}" class="btn btn-secondary">Volver</a>
+</div>
+
+<div class="detail-card">
+    <div id="error-alert" class="alert-error" style="display:none; margin-bottom: 20px;"></div>
+
+    <form id="form-orden" class="form-grid">
+        <!-- SECCIÓN MAESTRO -->
+        <h3 style="grid-column: 1 / -1; border-bottom: 1px solid #ddd; padding-bottom: 5px; color: #667eea;">Información General</h3>
+        
+        <div class="form-group">
+            <label for="id_orden">Código Único de Órden (ID) *</label>
+            <input type="text" id="id_orden" placeholder="Ej: ORD-2026-001" required>
+        </div>
+
+        <div class="form-group">
+            <label for="id_proveedor">Proveedor *</label>
+            <select id="id_proveedor" required>
+                <option value="">-- Seleccione un Proveedor --</option>
+                {% for p in proveedores %}
+                <option value="{{ p.id_proveedor }}">{{ p.nombre_razon_social }} ({{ p.numero_identificacion }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="id_sede">Sede Destino *</label>
+            <select id="id_sede" required>
+                <option value="">-- Seleccione la Sede --</option>
+                {% for s in sedes %}
+                <option value="{{ s.id_sede }}">{{ s.nombre_sede }} ({{ s.ciudad }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="lugar_entrega">Lugar de Entrega Específico *</label>
+            <input type="text" id="lugar_entrega" placeholder='Ej: "Bodega de Insumos Agrícolas - Palmira"' required>
+        </div>
+
+        <div class="form-group">
+            <label>Estado Inicial</label>
+            <input type="text" value="Pendiente" readonly style="background-color: #e9ecef; font-weight: bold; color: #856404;">
+        </div>
+
+        <!-- SECCIÓN DETALLE (PRODUCTOS) -->
+        <h3 style="grid-column: 1 / -1; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 20px; color: #667eea;">Productos Solicitados</h3>
+        
+        <div style="grid-column: 1 / -1;">
+            <table class="table" id="tabla-detalles">
+                <thead>
+                    <tr>
+                        <th>Producto / Insumo *</th>
+                        <th style="width: 150px;">Cantidad (Mín 1) *</th>
+                        <th style="width: 200px;">Costo Unitario ($) *</th>
+                        <th style="width: 80px;">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Fila por defecto -->
+                    <tr class="fila-detalle">
+                        <td>
+                            <select class="det-producto" required>
+                                <option value="">-- Seleccione --</option>
+                                {% for prod in productos %}
+                                <option value="{{ prod.id_producto }}">{{ prod.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" class="det-cantidad" min="1" max="500" value="1" required>
+                        </td>
+                        <td>
+                            <input type="number" class="det-costo" min="0" placeholder="Costo negociado" required>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-small remove-row">X</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" id="btn-add-item" class="btn btn-secondary" style="margin-top: 10px;">+ Agregar Producto</button>
+        </div>
+
+        <div class="form-actions" style="grid-column: 1 / -1; margin-top: 30px;">
+            <button type="submit" class="btn btn-primary">Guardar Órden</button>
+            <a href="/ordenes" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.getElementById('btn-add-item').addEventListener('click', function() {
+    const tbody = document.querySelector('#tabla-detalles tbody');
+    const firstRow = tbody.querySelector('.fila-detalle');
+    const newRow = firstRow.cloneNode(true);
+    
+    // Limpiar inputs de la fila clonada
+    newRow.querySelector('.det-producto').value = "";
+    newRow.querySelector('.det-cantidad').value = "1";
+    newRow.querySelector('.det-costo').value = "";
+    
+    tbody.appendChild(newRow);
+});
+
+document.querySelector('#tabla-detalles').addEventListener('click', function(e) {
+    if(e.target.classList.contains('remove-row')) {
+        const rows = document.querySelectorAll('.fila-detalle');
+        if(rows.length > 1) {
+            e.target.closest('tr').remove();
+        } else {
+            alert("La orden debe incluir al menos un producto.");
+        }
+    }
+});
+
+document.getElementById('form-orden').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const id_orden = document.getElementById('id_orden').value;
+    const id_proveedor = document.getElementById('id_proveedor').value;
+    const id_sede = document.getElementById('id_sede').value;
+    const lugar_entrega = document.getElementById('lugar_entrega').value;
+    
+    const items = [];
+    const filas = document.querySelectorAll('.fila-detalle');
+    
+    let index = 1;
+    filas.forEach(filas => {
+        const id_producto = filas.querySelector('.det-producto').value;
+        const cantidad = parseInt(filas.querySelector('.det-cantidad').value);
+        const costo_unitario = parseInt(filas.querySelector('.det-costo').value);
+        
+        if (id_producto) {
+            items.push({
+                "id_detalle_orden": `DET-${id_orden}-${index}`,
+                "id_producto": id_producto,
+                "cantidad": cantidad,
+                "costo_unitario": costo_unitario
+            });
+            index++;
+        }
+    });
+
+    const payload = {
+        "id_orden": id_orden,
+        "id_proveedor": id_proveedor,
+        "id_sede": id_sede,
+        "lugar_entrega": lugar_entrega,
+        "items": items
+    };
+
+    fetch('/api/ordenes/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(async response => {
+        const data = await response.json();
+        if(!response.ok) {
+            throw new Error(data.error || "Error indeterminado al guardar.");
+        }
+        window.location.href = '/ordenes/' + data.id_orden;
+    })
+    .catch(error => {
+        const errAlert = document.getElementById('error-alert');
+        errAlert.textContent = error.message;
+        errAlert.style.display = 'block';
+        window.scrollTo(0, 0);
+    });
+});
+</script>
+{% endblock %}

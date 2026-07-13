@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Órden {{ orden.id_orden }} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Órden de Pedido #{{ orden.id_orden }}</h1>
+    <div class="actions">
+        <a href="/ordenes" class="btn btn-secondary">Volver al Listado</a>
+    </div>
+</div>
+
+<div class="detail-card">
+    <div class="detail-section">
+        <h2>Encabezado de la Transacción</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>ID Orden:</label>
+                <p>{{ orden.id_orden }}</p>
+            </div>
+            <div class="info-item">
+                <label>Proveedor Responsable:</label>
+                <p>{{ orden.id_proveedor }}</p>
+            </div>
+            <div class="info-item">
+                <label>Fecha de Solicitud:</label>
+                <p>{{ orden.fecha_pedido }}</p>
+            </div>
+            <div class="info-item">
+                <label>Lugar de Entrega:</label>
+                <p>{{ orden.lugar_entrega }}</p>
+            </div>
+            <div class="info-item">
+                <label>Estado de la Orden:</label>
+                <p><strong>{{ orden.estado|upper }}</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-section">
+        <h2>Ítems Solicitados</h2>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID Detalle</th>
+                        <th>Código Producto</th>
+                        <th>Cantidad Solicitada</th>
+                        <th>Costo Unitario</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in orden.detalles %}
+                    <tr>
+                        <td>{{ item.id_detalle_orden }}</td>
+                        <td>{{ item.id_producto }}</td>
+                        <td>{{ item.cantidad }}</td>
+                        <td>${{ "{:,.0f}".format(item.costo_unitario) }}</td>
+                        <td>${{ "{:,.0f}".format(item.cantidad * item.costo_unitario) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

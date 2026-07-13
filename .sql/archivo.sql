@@ -115,7 +115,6 @@ CREATE TABLE SEDES (
 -- ORDENES_PEDIDO_PROVEEDOR
 CREATE TABLE ORDENES_PEDIDO_PROVEEDOR (
     id_orden        VARCHAR(100) PRIMARY KEY,
-    numero_orden    BIGSERIAL UNIQUE,           -- consecutivo interno (1,2,3...)
 
     id_sede         VARCHAR(100) NOT NULL
         REFERENCES SEDES(id_sede)

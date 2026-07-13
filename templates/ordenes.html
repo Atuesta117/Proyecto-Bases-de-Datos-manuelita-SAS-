@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Órdenes de Pedido - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Órdenes de Pedido a Proveedores</h1>
+    <a href="{{ url_for('ordenes_vistas.crear_orden_view') }}" class="btn btn-primary">+ Nueva Órden</a>
+</div>
+
+{% if ordenes %}
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID Orden</th>
+                <th>Proveedor</th>
+                <th>Fecha Pedido</th>
+                <th>Lugar de Entrega</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for orden in ordenes %}
+            <tr>
+                <td>{{ orden.id_orden }}</td>
+                <td>{{ orden.id_proveedor }}</td>
+                <td>{{ orden.fecha_pedido }}</td>
+                <td>{{ orden.lugar_entrega }}</td>
+                <td>
+                    <span class="badge badge-{{ orden.estado }}">
+                        {{ orden.estado|upper }}
+                    </span>
+                </td>
+                <td class="actions">
+                    <a href="{{ url_for('ordenes_vistas.ver_orden_detalle', id_orden=orden.id_orden) }}" class="btn btn-small btn-info">Ver Detalle</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No hay órdenes de pedido registradas en el sistema.</p>
+    <a href="{{ url_for('ordenes_vistas.crear_orden_view') }}" class="btn btn-primary">+ Crear Primera Órden</a>
+</div>
+{% endif %}
+
+<style>
+    .badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: bold;
+    }
+    .badge-pendiente { background-color: #ffeeba; color: #856404; }
+    .badge-en_transito { background-color: #b8daff; color: #004085; }
+    .badge-recibido { background-color: #c3e6cb; color: #155724; }
+    .badge-cancelado { background-color: #f5c6cb; color: #721c24; }
+</style>
+{% endblock %}

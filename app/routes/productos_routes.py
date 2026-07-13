@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.services import producto_service
 
-productos_api_bp = Blueprint("productos", __name__, url_prefix="/api/productos")
+productos_api_bp = Blueprint("productos_api", __name__, url_prefix="/api/productos")
 
 
 @productos_api_bp.route("/", methods=["GET"])

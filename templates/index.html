@@ -4,69 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - Manuelita SAS</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/forms.css') }}">
+    <!-- Corrección de las rutas static de Flask sin usar rutas relativas '../' -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+    <!-- Se asume que el segundo archivo de estilos generales se llama main.css o similar -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body style="background-color: #f5f5f5;">
 <div class="container">
-<div class="hero">
-    <h1>Bienvenido a Manuelita SAS</h1>
-    <p>Sistema Integral de Gestión de Clientes y Proveedores</p>
-</div>
-
-<div class="dashboard">
-    <div class="card">
-        <div class="card-icon">👥</div>
-        <h2>Clientes</h2>
-        <p>Gestiona la información completa de tus clientes, contactos y seguimiento comercial.</p>
-        <a href="{{ url_for('clientes.ver_clientes') }}" class="btn btn-primary">Ver Clientes</a>
+    <div class="hero">
+        <h1>Bienvenido a Manuelita SAS</h1>
+        <p>Sistema Integral de Gestión de Clientes, Proveedores y Órdenes de Pedido</p>
     </div>
 
-    <div class="card">
-        <div class="card-icon">🏢</div>
-        <h2>Proveedores</h2>
-        <p>Administra tus proveedores, términos de pago y condiciones comerciales.</p>
-        <a href="{{ url_for('proveedores.ver_proveedores') }}" class="btn btn-primary">Ver Proveedores</a>
-    </div>
-</div>
+    <!-- Se actualiza el dashboard para soportar 3 columnas de manera limpia -->
+    <div class="dashboard" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        <div class="card">
+            <div class="card-icon">👥</div>
+            <h2>Clientes</h2>
+            <p>Gestiona la información completa de tus clientes, contactos y seguimiento comercial.</p>
+            <a href="{{ url_for('clientes.ver_clientes') }}" class="btn btn-primary">Ver Clientes</a>
+        </div>
 
-<div class="stats-section">
-    <h2>Estadísticas</h2>
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-number">500</div>
-            <div class="stat-label">Clientes Registrados</div>
+        <div class="card">
+            <div class="card-icon">🏢</div>
+            <h2>Proveedores</h2>
+            <p>Administra tus proveedores, términos de pago y condiciones comerciales.</p>
+            <a href="{{ url_for('proveedores.ver_proveedores') }}" class="btn btn-primary">Ver Proveedores</a>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">200</div>
-            <div class="stat-label">Proveedores Activos</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">6</div>
-            <div class="stat-label">Ciudades Principales</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">100%</div>
-            <div class="stat-label">Disponibilidad del Sistema</div>
-        </div>
-    </div>
-</div>
 
-<div class="info-section">
-    <div class="info-card">
-        <h3>📋 Acerca del Sistema</h3>
-        <p>Manuelita SAS es una solución integral para la gestión de relaciones comerciales. Permite administrar de manera centralizada toda la información de clientes y proveedores, facilitando la toma de decisiones estratégicas en tu negocio.</p>
+        <div class="card">
+            <div class="card-icon">🍪</div>
+            <h2>Productos</h2>
+            <p>Genera y audita las órdenes de compra transaccionales e insumos destinados a tus sedes.</p>
+            <a href="{{ url_for('productos.ver_productos') }}" class="btn btn-primary">Ver Productos</a>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">📦</div>
+            <h2>Órdenes de Pedido</h2>
+            <p>Genera y audita las órdenes de compra transaccionales e insumos destinados a tus sedes.</p>
+            <a href="{{ url_for('ordenes_vistas.ver_ordenes') }}" class="btn btn-primary">Ver Órdenes</a>
+        </div>
     </div>
-    <div class="info-card">
-        <h3>🎯 Características Principales</h3>
-        <ul>
-            <li>Registro completo de clientes y proveedores</li>
-            <li>Gestión de contactos comerciales</li>
-            <li>Información bancaria y de pagos</li>
-            <li>Histórico de registros</li>
-            <li>Interfaz intuitiva y responsiva</li>
-        </ul>
+
+    <div class="stats-section">
+        <h2>Estadísticas</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">500</div>
+                <div class="stat-label">Clientes Registrados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">200</div>
+                <div class="stat-label">Proveedores Activos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Ciudades Principales</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Disponibilidad del Sistema</div>
+            </div>
+        </div>
     </div>
-</div>
+
+    <div class="info-section">
+        <div class="info-card">
+            <h3>📋 Acerca del Sistema</h3>
+            <p>Manuelita SAS es una solución integral para la gestión de relaciones comerciales. Permite administrar de manera centralizada toda la información de clientes y proveedores, facilitando la toma de decisiones estratégicas en tu negocio.</p>
+        </div>
+        <div class="info-card">
+            <h3>🎯 Características Principales</h3>
+            <ul>
+                <li>Registro completo de clientes y proveedores</li>
+                <li>Gestión de contactos comerciales</li>
+                <li>Generación inmutable de Órdenes de Pedido maestro-detalle</li>
+                <li>Información bancaria y de pagos</li>
+                <li>Interfaz intuitiva y responsiva</li>
+            </ul>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -98,7 +116,7 @@
 
 .dashboard {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
     margin-bottom: 3rem;
 }

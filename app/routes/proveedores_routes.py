@@ -1,18 +1,18 @@
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify
 from app.services import proveedor_service
 
-proveedores_bp = Blueprint("proveedores", __name__, url_prefix="/api/proveedores")
+proveedores_api_bp = Blueprint(
+    "proveedores_api", __name__, url_prefix="/api/proveedores"
+)
 
 
-# ============== RUTAS API ==============
-
-@proveedores_bp.route("/", methods=["GET"])
+@proveedores_api_bp.route("/", methods=["GET"])
 def listar_proveedores():
     proveedores = proveedor_service.obtener_todos_los_proveedores()
     return jsonify([p.to_dict() for p in proveedores]), 200
 
 
-@proveedores_bp.route("/<string:id_proveedor>", methods=["GET"])
+@proveedores_api_bp.route("/<string:id_proveedor>", methods=["GET"])
 def obtener_proveedor(id_proveedor):
     proveedor = proveedor_service.obtener_proveedor_por_id(id_proveedor)
     if proveedor is None:
@@ -20,7 +20,7 @@ def obtener_proveedor(id_proveedor):
     return jsonify(proveedor.to_dict()), 200
 
 
-@proveedores_bp.route("/", methods=["POST"])
+@proveedores_api_bp.route("/", methods=["POST"])
 def crear_proveedor():
     data = request.get_json()
 
@@ -44,7 +44,7 @@ def crear_proveedor():
     return jsonify(nuevo.to_dict()), 201
 
 
-@proveedores_bp.route("/<string:id_proveedor>", methods=["PUT"])
+@proveedores_api_bp.route("/<string:id_proveedor>", methods=["PUT"])
 def actualizar_proveedor(id_proveedor):
     data = request.get_json()
 
@@ -58,7 +58,7 @@ def actualizar_proveedor(id_proveedor):
     return jsonify(proveedor.to_dict()), 200
 
 
-@proveedores_bp.route("/<string:id_proveedor>", methods=["DELETE"])
+@proveedores_api_bp.route("/<string:id_proveedor>", methods=["DELETE"])
 def eliminar_proveedor(id_proveedor):
     resultado = proveedor_service.eliminar_proveedor(id_proveedor)
 
@@ -84,18 +84,3 @@ def eliminar_proveedor(id_proveedor):
         ), 409
 
     return jsonify({"mensaje": "Proveedor eliminado con éxito"}), 200
-
-
-
-@proveedores_bp.route("/web/", methods=["GET"])
-def ver_proveedores():
-    proveedores = proveedor_service.obtener_todos_los_proveedores()
-    return render_template('proveedores.html', proveedores=proveedores)
-
-
-@proveedores_bp.route("/web/<string:id_proveedor>", methods=["GET"])
-def ver_proveedor_detalle(id_proveedor):
-    proveedor = proveedor_service.obtener_proveedor_por_id(id_proveedor)
-    if proveedor is None:
-        return jsonify({"error": "Proveedor no encontrado"}), 404
-    return render_template('proveedor_detalle.html', proveedor=proveedor)

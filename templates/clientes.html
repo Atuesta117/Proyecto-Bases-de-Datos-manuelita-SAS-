@@ -5,11 +5,11 @@
 {% block content %}
 <div class="header-section">
     <h1>Lista de Clientes</h1>
-    <a href="#" class="btn btn-primary">+ Nuevo Cliente</a>
+    <a href="{{ url_for('clientes.crear_cliente_view') }}" class="btn btn-primary">+ Nuevo Cliente</a>
 </div>
 
 {% if clientes %}
-<div class="table-responsive">
+<div class="table-responsive" data-api-base="/api/clientes">
     <table class="table">
         <thead>
             <tr>
@@ -33,8 +33,10 @@
                 <td>{{ cliente.ciudad }}</td>
                 <td class="actions">
                     <a href="{{ url_for('clientes.ver_cliente_detalle', id_cliente=cliente.id_cliente) }}" class="btn btn-small btn-info">Ver</a>
-                    <a href="#" class="btn btn-small btn-warning">Editar</a>
-                    <a href="#" class="btn btn-small btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</a>
+                    <a href="{{ url_for('clientes.editar_cliente_view', id_cliente=cliente.id_cliente) }}" class="btn btn-small btn-warning">Editar</a>
+                    <a href="#" class="btn btn-small btn-danger btn-eliminar"
+                       data-id="{{ cliente.id_cliente }}"
+                       data-nombre="{{ cliente.nombre_razon_social }}">Eliminar</a>
                 </td>
             </tr>
             {% endfor %}
@@ -44,7 +46,7 @@
 {% else %}
 <div class="empty-state">
     <p>No hay clientes registrados</p>
-    <a href="#" class="btn btn-primary">+ Crear Primer Cliente</a>
+    <a href="{{ url_for('clientes.crear_cliente_view') }}" class="btn btn-primary">+ Crear Primer Cliente</a>
 </div>
 {% endif %}
 {% endblock %}

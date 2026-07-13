@@ -3,12 +3,14 @@
 {% block title %}{{ proveedor.nombre_razon_social }} - Manuelita SAS{% endblock %}
 
 {% block content %}
-<div class="header-section">
+<div class="header-section" data-api-base="/api/proveedores" data-redirect="{{ url_for('proveedores.ver_proveedores') }}">
     <h1>{{ proveedor.nombre_razon_social }}</h1>
     <div class="actions">
         <a href="{{ url_for('proveedores.ver_proveedores') }}" class="btn btn-secondary">Volver</a>
-        <a href="#" class="btn btn-warning">Editar</a>
-        <a href="#" class="btn btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</a>
+        <a href="{{ url_for('proveedores.editar_proveedor_view', id_proveedor=proveedor.id_proveedor) }}" class="btn btn-warning">Editar</a>
+        <a href="#" class="btn btn-danger btn-eliminar"
+           data-id="{{ proveedor.id_proveedor }}"
+           data-nombre="{{ proveedor.nombre_razon_social }}">Eliminar</a>
     </div>
 </div>
 
@@ -46,19 +48,35 @@
                 <label>RUT:</label>
                 <p>{{ proveedor.rut }}</p>
             </div>
+            {% if proveedor.num_contacto %}
+            <div class="info-item">
+                <label>{{ proveedor.tipo_num_contacto|capitalize if proveedor.tipo_num_contacto else 'Contacto' }}:</label>
+                <p>{{ proveedor.num_contacto }}</p>
+            </div>
+            {% endif %}
         </div>
     </div>
 
-    {% if proveedor.telefono %}
     <div class="detail-section">
-        <h2>Información Adicional</h2>
+        <h2>Información Comercial</h2>
         <div class="info-grid">
             <div class="info-item">
-                <label>Teléfono:</label>
-                <p>{{ proveedor.telefono }}</p>
+                <label>Tipo de Proveedor:</label>
+                <p>{{ proveedor.tipo_proveedor }}</p>
+            </div>
+            <div class="info-item">
+                <label>Tiempo de Entrega Promedio:</label>
+                <p>{{ proveedor.tiempo_entrega_promedio }} días</p>
+            </div>
+            <div class="info-item">
+                <label>Condiciones de Pago:</label>
+                <p>{{ proveedor.condiciones_pago }} días</p>
+            </div>
+            <div class="info-item">
+                <label>Calificación:</label>
+                <p>{{ proveedor.calificacion }} / 5</p>
             </div>
         </div>
     </div>
-    {% endif %}
 </div>
 {% endblock %}

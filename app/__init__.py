@@ -1,24 +1,18 @@
-from flask import Flask, render_template
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from config import Config
-import os
 
 db = SQLAlchemy()
 
 
 def create_app():
-    # Especifica las rutas de templates y static
-    template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'templates'))
-    static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
-    
-    app = Flask(__name__, 
-                template_folder=template_dir,
-                static_folder=static_dir)
+    app = Flask(
+        __name__,
+        template_folder="../templates",
+        static_folder="../static",
+    )
     app.config.from_object(Config)
     db.init_app(app)
-    @app.route('/')
-    def index():
-        return render_template('index.html')
 
     # Importamos TODOS los modelos aquí (antes de los blueprints) para que
     # SQLAlchemy pueda resolver las relaciones declaradas por string
@@ -29,20 +23,33 @@ def create_app():
         from app.models import orden_proveedor, lote  # noqa: F401
         from app.models import pedido, factura, logistica  # noqa: F401
 
-    # Importamos los Blueprints
-    from app.routes.clientes_routes import clientes_bp
-    from app.routes.proveedores_routes import proveedores_bp
+    # --- Blueprints de API JSON (para Postman / frontend por fetch) ---
+    from app.routes.clientes_routes import clientes_api_bp
+    from app.routes.proveedores_routes import proveedores_api_bp
     from app.routes.productos_routes import productos_bp
     from app.routes.ordenes_routes import ordenes_bp
     from app.routes.pedidos_routes import pedidos_bp
     from app.routes.facturas_routes import facturas_bp
 
-    # Registramos los Blueprints en la app de Flask
-    app.register_blueprint(clientes_bp)
-    app.register_blueprint(proveedores_bp)
+    app.register_blueprint(clientes_api_bp)
+    app.register_blueprint(proveedores_api_bp)
     app.register_blueprint(productos_bp)
     app.register_blueprint(ordenes_bp)
     app.register_blueprint(pedidos_bp)
     app.register_blueprint(facturas_bp)
+
+    # --- Blueprints de vistas HTML (server-side, Jinja) ---
+    from app.routes.clientes_views import clientes_bp
+    from app.routes.proveedores_views import proveedores_bp
+
+    app.register_blueprint(clientes_bp)
+    app.register_blueprint(proveedores_bp)
+
+    # --- Ruta de inicio ---
+    from flask import render_template
+
+    @app.route("/")
+    def index():
+        return render_template("index.html")
 
     return app

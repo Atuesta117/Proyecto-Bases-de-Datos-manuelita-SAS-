@@ -106,3 +106,33 @@ class Producto(db.Model):
             "punto_reorden": punto_reorden,
             "necesita_pedido_por_tiempo_entrega": necesita_pedido_por_tiempo_entrega,
         }
+
+
+class StockProducto(db.Model):
+    __tablename__ = "stockproductos"
+
+    id_stock = db.Column(db.String(100), primary_key=True)
+    id_producto = db.Column(
+        db.String(100),
+        db.ForeignKey("productos.id_producto"),
+        unique=True,
+        nullable=False,
+    )
+    cantidad_disponible = db.Column(db.Integer, nullable=False)
+    cantidad_reservada = db.Column(db.Integer, nullable=False)
+    stock_minimo = db.Column(db.Integer, nullable=False)
+    demanda_diaria = db.Column(db.Numeric(10, 3), nullable=False, default=0)
+    ultima_actualizacion = db.Column(
+        db.DateTime, nullable=False, default=db.func.current_timestamp()
+    )
+
+    def to_dict(self):
+        return {
+            "id_stock": self.id_stock,
+            "id_producto": self.id_producto,
+            "cantidad_disponible": self.cantidad_disponible,
+            "cantidad_reservada": self.cantidad_reservada,
+            "stock_minimo": self.stock_minimo,
+            "demanda_diaria": float(self.demanda_diaria),
+            "ultima_actualizacion": self.ultima_actualizacion.isoformat(),
+        }

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Pedidos - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Lista de Pedidos</h1>
+    <a href="{{ url_for('pedidos_views.crear_pedido_view') }}" class="btn btn-primary">+ Nuevo Pedido</a>
+</div>
+
+{% if pedidos %}
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID Pedido</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th># Productos</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in pedidos %}
+            <tr>
+                <td>{{ pedido.id_pedido }}</td>
+                <td>{{ pedido.id_cliente }}</td>
+                <td>{{ pedido.fecha_pedido.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td><span class="badge badge-{{ pedido.estado }}">{{ pedido.estado }}</span></td>
+                <td>{{ pedido.detalles|length }}</td>
+                <td class="actions">
+                    <a href="{{ url_for('pedidos_views.ver_pedido_detalle', id_pedido=pedido.id_pedido) }}" class="btn btn-small btn-info">Ver</a>
+                    {% if pedido.estado == 'verificado' %}
+                    <a href="{{ url_for('facturas_views.generar_factura_view', id_pedido=pedido.id_pedido) }}" class="btn btn-small btn-primary">Facturar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No hay pedidos registrados</p>
+    <a href="{{ url_for('pedidos_views.crear_pedido_view') }}" class="btn btn-primary">+ Crear Primer Pedido</a>
+</div>
+{% endif %}
+{% endblock %}

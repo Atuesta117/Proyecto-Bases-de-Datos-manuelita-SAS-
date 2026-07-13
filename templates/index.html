@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - Manuelita SAS</title>
-    <!-- Corrección de las rutas static de Flask sin usar rutas relativas '../' -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
-    <!-- Se asume que el segundo archivo de estilos generales se llama main.css o similar -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/style.css') }}">
 </head>
 <body style="background-color: #f5f5f5;">
 <div class="container">
@@ -45,6 +42,20 @@
             <p>Genera y audita las órdenes de compra transaccionales e insumos destinados a tus sedes.</p>
             <a href="{{ url_for('ordenes_vistas.ver_ordenes') }}" class="btn btn-primary">Ver Órdenes</a>
         </div>
+
+        <div class="card">
+        <div class="card-icon" style="font-size: 2.5rem; margin-bottom: 0.5rem;">📦</div>
+        <h2>Pedidos Clientes</h2>
+        <p>Registra solicitudes de tus compradores y gestiona la verificación de stock en tiempo real (FEFO).</p>
+        <a href="{{ url_for('pedidos_views.ver_pedidos') }}" class="btn btn-primary">Ver Pedidos</a>
+    </div>
+
+    <div class="card">
+        <div class="card-icon" style="font-size: 2.5rem; margin-bottom: 0.5rem;">📄</div>
+        <h2>Facturas y Envíos</h2>
+        <p>Consulta facturas electrónicas emitidas e inmutables, con cálculo automático de IVA y logística.</p>
+        <a href="{{ url_for('facturas_views.ver_facturas') }}" class="btn btn-primary">Ver Facturas</a>
+    </div>
     </div>
 
     <div class="stats-section">

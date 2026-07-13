@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f5f5;
+    background-color: #FBF5DD;
     color: #333;
     line-height: 1.6;
 }
@@ -18,14 +18,14 @@ html {
 
 /* ============= CONTENEDOR ============= */
 .container {
-    max-width: 1200px;
+    max-width: 1500px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
 /* ============= NAVBAR ============= */
 .navbar {
-    background: linear-gradient(135deg, #73976A 0%, #677E61 100%);
+    background: linear-gradient(135deg, #467235 0%, #0D530E 100%);
     color: white;
     padding: 1rem 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -40,9 +40,18 @@ html {
     align-items: center;
 }
 
-.navbar .logo {
+.logo img{
+    width: 5rem;
+}
+
+.navbar .logo{
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    justify-content: center;
+    font-family: "Montserrat", sans-serif;;
     font-size: 1.8rem;
-    font-weight: bold;
+    font-weight: 500;
     color: white;
 }
 
@@ -73,7 +82,7 @@ main {
 .hero {
     text-align: center;
     padding: 3rem 0;
-    background: linear-gradient(135deg, #73976A 0%, #677E61 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border-radius: 10px;
     margin-bottom: 2rem;
@@ -163,11 +172,11 @@ main {
 }
 
 .btn-primary {
-    background-color: #667eea;
+    background: linear-gradient(135deg, #467235 0%, #0D530E 100%);
 }
 
 .btn-primary:hover {
-    background-color: #5568d3;
+    background: #0D530E;
 }
 
 .btn-secondary {
@@ -213,6 +222,7 @@ main {
     overflow-x: auto;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
 }
 
 .table {
@@ -222,7 +232,7 @@ main {
 }
 
 .table thead {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #467235 0%, #0D530E 100%);
     color: white;
 }
 
@@ -445,4 +455,88 @@ footer p {
 
 .mb-3 {
     margin-bottom: 1.5rem;
+}
+
+/* ============= FORMULARIOS (crear/editar) ============= */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #667eea;
+    margin-bottom: 0.4rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.65rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.form-group input[readonly],
+.form-group select[disabled] {
+    background-color: #eee;
+    color: #777;
+    cursor: not-allowed;
+}
+
+.form-group small {
+    color: #999;
+    margin-top: 0.3rem;
+    font-size: 0.8rem;
+}
+
+.checkbox-group {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+.form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #842029;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #dc3545;
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
 }

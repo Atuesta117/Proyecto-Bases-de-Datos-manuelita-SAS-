@@ -19,17 +19,16 @@ random.seed(42)  # reproducible
 # ------------------------------------------------------------------ #
 # Parámetros de volumen ("Grande / realista")
 # ------------------------------------------------------------------ #
-N_CLIENTES = 500
+N_CLIENTES   = 500
 N_PROVEEDORES = 200
-N_SEDES = 10
-N_PRODUCTOS = 500
-N_ORDENES = 2000
-N_PEDIDOS = 2000
-N_CAMIONES = 60
+N_SEDES      = 10
+N_PRODUCTOS  = 500
+N_ORDENES    = 2000
+N_PEDIDOS    = 2000
+N_CAMIONES   = 60
 N_CONDUCTORES = 80
 
 TODAY = date(2026, 7, 13)
-
 
 # ------------------------------------------------------------------ #
 # Utilidades
@@ -40,125 +39,80 @@ def esc(s):
         return "NULL"
     return "'" + str(s).replace("'", "''") + "'"
 
-
 def num(n):
     if n is None:
         return "NULL"
     return str(n)
 
-
 def b(v):
     return "TRUE" if v else "FALSE"
-
 
 def rand_date(start, end):
     delta = (end - start).days
     return start + timedelta(days=random.randint(0, max(delta, 0)))
 
-
-CIUDADES = [
-    "Cali",
-    "Bogotá",
-    "Medellín",
-    "Barranquilla",
-    "Cartagena",
-    "Bucaramanga",
-    "Pereira",
-    "Manizales",
-    "Cúcuta",
-    "Ibagué",
-]
+CIUDADES = ["Palmira", "El Cerrito", "Cali", "Puerto López", "Villanueva",
+            "San Carlos de Guaroa", "Bogotá", "Barranquilla", "Cartagena", "Buenaventura"]
 DEPARTAMENTOS = {
-    "Cali": "Valle del Cauca",
-    "Bogotá": "Cundinamarca",
-    "Medellín": "Antioquia",
-    "Barranquilla": "Atlántico",
-    "Cartagena": "Bolívar",
-    "Bucaramanga": "Santander",
-    "Pereira": "Risaralda",
-    "Manizales": "Caldas",
-    "Cúcuta": "Norte de Santander",
-    "Ibagué": "Tolima",
+    "Palmira": "Valle del Cauca", "El Cerrito": "Valle del Cauca", "Cali": "Valle del Cauca",
+    "Puerto López": "Meta", "Villanueva": "Casanare", "San Carlos de Guaroa": "Meta",
+    "Bogotá": "Cundinamarca", "Barranquilla": "Atlántico", "Cartagena": "Bolívar",
+    "Buenaventura": "Valle del Cauca",
 }
-BANCOS = [
-    "Bancolombia",
-    "BBVA",
-    "Banco de Bogotá",
-    "Davivienda",
-    "Banco Popular",
-    "Nequi",
-]
-CATEGORIAS = [
-    "Lácteos",
-    "Bebidas",
-    "Snacks",
-    "Aseo",
-    "Panadería",
-    "Congelados",
-    "Enlatados",
-    "Granos",
-    "Condimentos",
-    "Cárnicos",
-]
+BANCOS = ["Bancolombia", "BBVA", "Banco de Bogotá", "Davivienda", "Banco Popular", "Nequi"]
+
+# Catálogo agroindustrial Manuelita: azúcar, bioetanol, aceite de palma,
+# miel/melaza, acuicultura (camarón) y frutas/uvas.
+# NOTA: el CHECK del esquema solo permite unidad_medida IN ('g','kg','l','ml','galon').
+CATEGORIAS = ["Azúcar", "Bioetanol", "Alcohol", "Miel", "Melaza",
+              "Aceite de Palma", "Camarón", "Frutas", "Abono Orgánico"]
+# Nombres concretos por categoría
+PRODUCTOS_POR_CAT = {
+    "Azúcar":         ["Azúcar Blanca Refinada", "Azúcar Morena", "Azúcar Sulfitada",
+                       "Azúcar Blanca Especial", "Azúcar Pulverizada", "Azúcar Orgánica"],
+    "Bioetanol":      ["Bioetanol Carburante", "Etanol Anhidro", "Alcohol Carburante E10"],
+    "Alcohol":        ["Alcohol Etílico 96%", "Alcohol Extraneutro", "Alcohol Industrial"],
+    "Miel":           ["Miel Virgen de Caña", "Miel Final", "Jarabe de Caña"],
+    "Melaza":         ["Melaza de Caña", "Melaza para Alimentación Animal"],
+    "Aceite de Palma":["Aceite Crudo de Palma", "Aceite de Palmiste", "Oleína de Palma",
+                       "Estearina de Palma"],
+    "Camarón":        ["Camarón Congelado Entero", "Camarón Cola Pelado", "Camarón Precocido"],
+    "Frutas":         ["Uva Red Globe", "Uva Sugraone", "Uva de Mesa Premium"],
+    "Abono Orgánico": ["Cachaza Compostada", "Biofertilizante de Vinaza", "Bocashi de Bagazo"],
+}
 UNIDADES = ["g", "kg", "l", "ml", "galon"]
+# Unidad típica por categoría (solo valores permitidos por el CHECK)
+UNIDAD_POR_CAT = {
+    "Azúcar": ["kg", "g"],
+    "Bioetanol": ["l", "galon"], "Alcohol": ["l", "galon"],
+    "Miel": ["kg", "l"], "Melaza": ["kg", "l"],
+    "Aceite de Palma": ["kg", "l", "galon"], "Camarón": ["kg", "g"],
+    "Frutas": ["kg", "g"], "Abono Orgánico": ["kg"],
+}
 MARCAS_CAMION = ["Chevrolet", "Hino", "Foton", "JAC", "Kenworth", "Freightliner"]
-NOMBRES = [
-    "Carlos",
-    "Ana",
-    "Luis",
-    "María",
-    "Jorge",
-    "Sofía",
-    "Andrés",
-    "Laura",
-    "Diego",
-    "Camila",
-    "Julián",
-    "Valentina",
-    "Felipe",
-    "Daniela",
-]
-APELLIDOS = [
-    "Gómez",
-    "Rodríguez",
-    "Martínez",
-    "López",
-    "García",
-    "Pérez",
-    "Torres",
-    "Ramírez",
-    "Vargas",
-    "Cruz",
-    "Ruiz",
-    "Sánchez",
-]
+NOMBRES = ["Carlos", "Ana", "Luis", "María", "Jorge", "Sofía", "Andrés", "Laura",
+           "Diego", "Camila", "Julián", "Valentina", "Felipe", "Daniela"]
+APELLIDOS = ["Gómez", "Rodríguez", "Martínez", "López", "García", "Pérez",
+             "Torres", "Ramírez", "Vargas", "Cruz", "Ruiz", "Sánchez"]
 TRANSPORTADORAS = ["Servientrega", "Coordinadora", "TCC", "Envía", "Interrapidísimo"]
-PAISES = ["Estados Unidos", "México", "Ecuador", "Perú", "España", "Panamá", "Chile"]
-DIVISAS = ["USD", "EUR", "MXN", "PEN"]
+# Manuelita opera y exporta en Perú, Brasil, Chile y mercados de azúcar/etanol.
+PAISES = ["Perú", "Brasil", "Chile", "Estados Unidos", "Ecuador", "México", "Panamá"]
+DIVISAS = ["USD", "EUR", "PEN", "BRL", "CLP"]
 
-
-def cli_id(i):
-    return f"CLI-{i:06d}"
-
-
-def prov_id(i):
-    return f"PROV-{i:06d}"
-
+def cli_id(i):  return f"CLI-{i:06d}"
+def prov_id(i): return f"PROV-{i:06d}"
 
 lines = []
-
-
 def emit(sql):
     lines.append(sql)
-
 
 def section(title):
     emit(f"\n-- ============================================================")
     emit(f"-- {title}")
     emit(f"-- ============================================================")
 
-
 emit("-- seed.sql  -- Datos generados automáticamente (PostgreSQL)")
+emit("-- Manuelita S.A. (azúcar, bioetanol, energía, aceite de palma, miel, camarón, frutas)")
 emit("-- Complementa CLIENTES (500) y PROVEEDORES (200) ya insertados.")
 emit("BEGIN;")
 
@@ -173,10 +127,8 @@ tipos_iva = [
     ("IVA-000004", "General", 19.00),
 ]
 for tid, nombre, pct in tipos_iva:
-    emit(
-        f"INSERT INTO TIPOS_IVA (id_tipo_iva, nombre, porcentaje) VALUES "
-        f"({esc(tid)}, {esc(nombre)}, {pct});"
-    )
+    emit(f"INSERT INTO TIPOS_IVA (id_tipo_iva, nombre, porcentaje) VALUES "
+         f"({esc(tid)}, {esc(nombre)}, {pct});")
 iva_ids = [t[0] for t in tipos_iva]
 iva_pct = {t[0]: t[2] for t in tipos_iva}
 
@@ -188,9 +140,10 @@ EMPRESA_ID = "EMP-000001"
 emit(
     "INSERT INTO EMPRESA (id_empresa, nit, razon_social, nombre_comercial, direccion, "
     "ciudad, telefono, email, representante_legal, tipo_regimen) VALUES ("
-    f"{esc(EMPRESA_ID)}, {esc('900123456-7')}, {esc('Distribuidora del Valle S.A.S.')}, "
-    f"{esc('DisValle')}, {esc('Cra. 100 # 15-20')}, {esc('Cali')}, {esc('6024851000')}, "
-    f"{esc('contacto@disvalle.com.co')}, {esc('Fernando Gómez Ruiz')}, "
+    f"{esc(EMPRESA_ID)}, {esc('890303093-8')}, {esc('Manuelita S.A.')}, "
+    f"{esc('Manuelita')}, {esc('Ingenio Manuelita, Vía Palmira - El Cerrito Km 7')}, "
+    f"{esc('Palmira')}, {esc('6022756060')}, "
+    f"{esc('contacto@manuelita.com')}, {esc('Harold Eder Garcés')}, "
     f"{esc('responsable_iva')});"
 )
 
@@ -199,20 +152,33 @@ emit(
 # ------------------------------------------------------------------ #
 section("SEDES")
 sede_ids = []
-tipos_sede = ["bodega", "planta", "punto_venta", "administrativa"]
-for i in range(1, N_SEDES + 1):
+# Instalaciones reales / representativas de Manuelita (nombre, tipo, ciudad)
+SEDES_DEF = [
+    ("Sede Administrativa Palmira",            "administrativa", "Palmira"),
+    ("Ingenio Manuelita - Planta Azúcar",      "planta",         "Palmira"),
+    ("Destilería de Bioetanol El Cerrito",     "planta",         "El Cerrito"),
+    ("Planta de Cogeneración de Energía",      "planta",         "Palmira"),
+    ("Bioenergy - Planta de Etanol",           "planta",         "Puerto López"),
+    ("Manuelita Aceites y Energía - San Carlos","planta",        "San Carlos de Guaroa"),
+    ("Planta Extractora de Palma Villanueva",  "planta",         "Villanueva"),
+    ("Centro de Distribución Cali",            "bodega",         "Cali"),
+    ("Bodega Portuaria Buenaventura",          "bodega",         "Buenaventura"),
+    ("Bodega de Exportación Cartagena",        "bodega",         "Cartagena"),
+    ("Centro de Distribución Bogotá",          "bodega",         "Bogotá"),
+    ("Punto de Venta Barranquilla",            "punto_venta",    "Barranquilla"),
+]
+N_SEDES = len(SEDES_DEF)
+for i, (nombre, tipo, ciudad) in enumerate(SEDES_DEF, start=1):
     sid = f"SEDE-{i:06d}"
     sede_ids.append(sid)
-    ciudad = random.choice(CIUDADES)
-    tipo = "administrativa" if i == 1 else random.choice(tipos_sede)
-    es_principal = i == 1
-    fecha = rand_date(date(2018, 1, 1), date(2024, 12, 31))
+    es_principal = (i == 1)
+    fecha = rand_date(date(2010, 1, 1), date(2022, 12, 31))
     emit(
         "INSERT INTO SEDES (id_sede, id_empresa, nombre_sede, tipo_sede, ciudad, "
         "direccion, telefono, es_principal, fecha_apertura) VALUES ("
-        f"{esc(sid)}, {esc(EMPRESA_ID)}, {esc(f'Sede {ciudad} {i}')}, {esc(tipo)}, "
-        f"{esc(ciudad)}, {esc(f'Cra. {random.randint(1, 120)} # {random.randint(1, 99)}-{random.randint(1, 99)}')}, "
-        f"{esc(f'60{random.randint(2, 8)}{random.randint(1000000, 9999999)}')}, "
+        f"{esc(sid)}, {esc(EMPRESA_ID)}, {esc(nombre)}, {esc(tipo)}, "
+        f"{esc(ciudad)}, {esc(f'Km {random.randint(1,25)} Vía {ciudad}')}, "
+        f"{esc(f'60{random.randint(2,8)}{random.randint(1000000,9999999)}')}, "
         f"{b(es_principal)}, {esc(fecha.isoformat())});"
     )
 
@@ -222,24 +188,28 @@ for i in range(1, N_SEDES + 1):
 section("PRODUCTOS")
 producto_ids = []
 producto_precio = {}
-producto_iva = {}  # id_producto -> id_tipo_iva
+producto_iva = {}     # id_producto -> id_tipo_iva
+PRESENTACIONES = ["x 50 kg", "x 25 kg", "x 1 kg", "a granel", "x 1000 L",
+                  "x 200 L", "Big Bag 1 Ton", "x 12.5 kg", "Premium", "Estándar"]
 for i in range(1, N_PRODUCTOS + 1):
     pid = f"PROD-{i:06d}"
     producto_ids.append(pid)
     id_prov = prov_id(random.randint(1, N_PROVEEDORES))
     id_iva = random.choice(iva_ids)
     cat = random.choice(CATEGORIAS)
+    base = random.choice(PRODUCTOS_POR_CAT[cat])
+    nombre = f"{base} {random.choice(PRESENTACIONES)}"
     precio = random.randint(1000, 500000)
     peso = round(random.uniform(0.05, 25.0), 3)
-    unidad = random.choice(UNIDADES)
+    unidad = random.choice(UNIDAD_POR_CAT[cat])
     activo = random.random() > 0.05
     producto_precio[pid] = precio
     producto_iva[pid] = id_iva
     emit(
         "INSERT INTO PRODUCTOS (id_producto, id_proveedor, id_tipo_iva, nombre, "
         "descripcion, precio, categoria, peso, unidad_medida, activo) VALUES ("
-        f"{esc(pid)}, {esc(id_prov)}, {esc(id_iva)}, {esc(f'{cat} {i}')}, "
-        f"{esc(f'Producto {cat.lower()} referencia {i}')}, {precio}, {esc(cat)}, "
+        f"{esc(pid)}, {esc(id_prov)}, {esc(id_iva)}, {esc(nombre)}, "
+        f"{esc(f'{base} - línea {cat} de Manuelita (ref. {i})')}, {precio}, {esc(cat)}, "
         f"{peso}, {esc(unidad)}, {b(activo)});"
     )
 
@@ -300,7 +270,6 @@ section("LOTES")
 lotes_por_producto = {}  # id_producto -> [id_lote,...]
 lote_counter = 0
 
-
 def add_lote(pid, id_prov, id_sede, id_detalle_orden):
     global lote_counter
     lote_counter += 1
@@ -319,9 +288,8 @@ def add_lote(pid, id_prov, id_sede, id_detalle_orden):
     )
     lotes_por_producto.setdefault(pid, []).append(lid)
 
-
 # Un lote por cada detalle de orden recibida (vinculado a la orden)
-for did, pid, id_prov, id_sede in detalle_orden_recibidos:
+for (did, pid, id_prov, id_sede) in detalle_orden_recibidos:
     add_lote(pid, id_prov, id_sede, did)
 
 # Garantizar que TODO producto tenga al menos un lote (sin detalle_orden -> NULL)
@@ -370,7 +338,7 @@ for i in range(1, N_PEDIDOS + 1):
 section("DETALLE_PEDIDO_LOTE")
 asig_counter = 0
 for pid_ped, dets in detalle_pedido_por_pedido.items():
-    for did, pid, cantidad in dets:
+    for (did, pid, cantidad) in dets:
         lotes = lotes_por_producto.get(pid)
         if not lotes:
             continue
@@ -386,7 +354,7 @@ for pid_ped, dets in detalle_pedido_por_pedido.items():
 # VERIFICAR_PEDIDO (1 por pedido verificado/confirmado/rechazado)
 # ------------------------------------------------------------------ #
 section("VERIFICAR_PEDIDO")
-verificacion_de_pedido = {}  # id_pedido -> (id_verificacion, esValido)
+verificacion_de_pedido = {}   # id_pedido -> (id_verificacion, esValido)
 ver_counter = 0
 for pid_ped, estado in pedido_estado.items():
     if estado in ("verificado", "confirmado", "rechazado"):
@@ -411,7 +379,7 @@ metodos_pago = ["efectivo", "tarjeta", "transferencia", "contraentrega"]
 fact_counter = 0
 det_fact_counter = 0
 conf_counter = 0
-confirmaciones = []  # (id_confirmacion, id_factura, id_cliente, fecha)
+confirmaciones = []   # (id_confirmacion, id_factura, id_cliente, fecha)
 for pid_ped, estado in pedido_estado.items():
     if estado != "confirmado":
         continue
@@ -428,7 +396,7 @@ for pid_ped, estado in pedido_estado.items():
     subtotal = 0
     total_iva = 0
     item_rows = []
-    for did, pid, cantidad in dets:
+    for (did, pid, cantidad) in dets:
         precio = producto_precio[pid]
         pct = iva_pct[producto_iva[pid]]
         sub_item = precio * cantidad
@@ -476,21 +444,17 @@ for pid_ped, estado in pedido_estado.items():
 # CAMION
 # ------------------------------------------------------------------ #
 section("CAMION")
-camiones_por_sede = {}  # id_sede -> [id_camion]
+camiones_por_sede = {}   # id_sede -> [id_camion]
 camion_ids = []
 estados_camion = ["disponible", "en_ruta", "mantenimiento", "fuera_de_servicio"]
 placas_seen = set()
-
-
 def gen_placa():
     L = "ABCDEFGHJKLMNP"
     while True:
-        p = f"{random.choice(L)}{random.choice(L)}{random.choice(L)}{random.randint(100, 999)}"
+        p = f"{random.choice(L)}{random.choice(L)}{random.choice(L)}{random.randint(100,999)}"
         if p not in placas_seen:
             placas_seen.add(p)
             return p
-
-
 for i in range(1, N_CAMIONES + 1):
     cid = f"CAM-{i:06d}"
     camion_ids.append(cid)
@@ -512,16 +476,12 @@ section("CONDUCTOR")
 conductor_ids = []
 ced_seen = set()
 lic_seen = set()
-
-
 def gen_unique(seen, fn):
     while True:
         v = fn()
         if v not in seen:
             seen.add(v)
             return v
-
-
 for i in range(1, N_CONDUCTORES + 1):
     cid = f"COND-{i:06d}"
     conductor_ids.append(cid)
@@ -568,7 +528,7 @@ estados_envio = ["preparando", "en_camino", "entregado", "devuelto"]
 env_counter = 0
 asigc_counter = 0
 tracking_seen = set()
-for cfid, fid, id_cli, fecha_conf in confirmaciones:
+for (cfid, fid, id_cli, fecha_conf) in confirmaciones:
     env_counter += 1
     eid = f"ENV-{env_counter:06d}"
     id_sede_origen = random.choice(sede_ids)
@@ -579,8 +539,8 @@ for cfid, fid, id_cli, fecha_conf in confirmaciones:
     emit(
         "INSERT INTO ENVIOS (id_envio, id_pedido_confirmado, id_sede_origen, direccion_origen, "
         "direccion_destino, fecha_envio, fecha_entrega_estimada, estado_envio, tipo_envio) VALUES ("
-        f"{esc(eid)}, {esc(cfid)}, {esc(id_sede_origen)}, {esc('Bodega central Cali')}, "
-        f"{esc(f'Cra. {random.randint(1, 120)} # {random.randint(1, 99)}-{random.randint(1, 99)}, {ciudad_dest}')}, "
+        f"{esc(eid)}, {esc(cfid)}, {esc(id_sede_origen)}, {esc('Ingenio Manuelita, Palmira - Valle del Cauca')}, "
+        f"{esc(f'Cra. {random.randint(1,120)} # {random.randint(1,99)}-{random.randint(1,99)}, {ciudad_dest}')}, "
         f"{esc(fecha_envio.isoformat())}, {esc(fecha_est.isoformat())}, "
         f"{esc(random.choice(estados_envio))}, {esc(tipo)});"
     )
@@ -623,12 +583,6 @@ print(f"seed.sql generado: {len(lines)} lineas")
 print(f"  TIPOS_IVA={len(tipos_iva)} EMPRESA=1 SEDES={N_SEDES} PRODUCTOS={N_PRODUCTOS}")
 print(f"  STOCK={N_PRODUCTOS} ORDENES={N_ORDENES} DETALLE_ORDEN={det_orden_counter}")
 print(f"  LOTES={lote_counter} PEDIDOS={N_PEDIDOS} DETALLE_PEDIDO={det_pedido_counter}")
-print(
-    f"  VERIFICACIONES={ver_counter} FACTURAS={fact_counter} DETALLE_FACTURA={det_fact_counter}"
-)
-print(
-    f"  CONFIRMACIONES={conf_counter} ENVIOS={env_counter} ASIGNACIONES={asigc_counter}"
-)
-print(
-    f"  CAMIONES={N_CAMIONES} CONDUCTORES={N_CONDUCTORES} CAMION_CONDUCTOR={cc_counter}"
-)
+print(f"  VERIFICACIONES={ver_counter} FACTURAS={fact_counter} DETALLE_FACTURA={det_fact_counter}")
+print(f"  CONFIRMACIONES={conf_counter} ENVIOS={env_counter} ASIGNACIONES={asigc_counter}")
+print(f"  CAMIONES={N_CAMIONES} CONDUCTORES={N_CONDUCTORES} CAMION_CONDUCTOR={cc_counter}")

@@ -41,11 +41,12 @@ def create_app():
     # --- Blueprints de vistas HTML (server-side, Jinja) ---
     from app.routes.clientes_views import clientes_bp
     from app.routes.proveedores_views import proveedores_bp
-
+    from app.routes.productos_views import productos_bp
     from app.routes.ordenes_views import ordenes_vistas_bp
 
     app.register_blueprint(clientes_bp)
     app.register_blueprint(proveedores_bp)
+    app.register_blueprint(productos_bp)
     app.register_blueprint(ordenes_vistas_bp)
     # --- Ruta de inicio ---
     from flask import render_template

@@ -13,7 +13,6 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Número de Orden</th>
                 <th>ID Orden</th>
                 <th>Proveedor</th>
                 <th>Fecha Pedido</th>
@@ -25,7 +24,6 @@
         <tbody>
             {% for orden in ordenes %}
             <tr>
-                <td><strong>#{{ orden.numero_orden if orden.numero_orden else 'Sin Nump' }}</strong></td>
                 <td>{{ orden.id_orden }}</td>
                 <td>{{ orden.id_proveedor }}</td>
                 <td>{{ orden.fecha_pedido }}</td>

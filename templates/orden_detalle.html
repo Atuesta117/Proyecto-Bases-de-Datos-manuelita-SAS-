@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="header-section">
-    <h1>Órden de Pedido #{{ orden.numero_orden if orden.numero_orden else 'Pendiente por Asignar' }}</h1>
+    <h1>Órden de Pedido #{{ orden.id_orden }}</h1>
     <div class="actions">
         <a href="/ordenes" class="btn btn-secondary">Volver al Listado</a>
     </div>

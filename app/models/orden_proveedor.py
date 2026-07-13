@@ -6,10 +6,6 @@ class OrdenPedidoProveedor(db.Model):
     __tablename__ = "ordenes_pedido_proveedor"
 
     id_orden = db.Column(db.String(100), primary_key=True)
-    numero_orden = db.Column(
-        db.BigInteger, unique=True
-    )  # lo llena BIGSERIAL, no lo seteamos
-
     id_sede = db.Column(db.String(100), db.ForeignKey("sedes.id_sede"), nullable=False)
     id_proveedor = db.Column(
         db.String(100), db.ForeignKey("proveedores.id_proveedor"), nullable=False
@@ -32,7 +28,6 @@ class OrdenPedidoProveedor(db.Model):
     def to_dict(self):
         return {
             "id_orden": self.id_orden,
-            "numero_orden": self.numero_orden,
             "id_sede": self.id_sede,
             "id_proveedor": self.id_proveedor,
             "fecha_pedido": self.fecha_pedido.isoformat(),

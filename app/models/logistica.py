@@ -1,5 +1,78 @@
 from app import db
 from datetime import date
+from datetime import datetime
+
+
+class Empresa(db.Model):
+    __tablename__ = "empresa"
+
+    id_empresa = db.Column(db.String(100), primary_key=True)
+    nit = db.Column(db.String(20), unique=True, nullable=False)
+    razon_social = db.Column(db.String(150), nullable=False)
+    nombre_comercial = db.Column(db.String(150), nullable=True)
+    direccion = db.Column(db.String(255), nullable=False)
+    ciudad = db.Column(db.String(100), nullable=False, default="Cali")
+    telefono = db.Column(db.String(20), nullable=True)
+    email = db.Column(db.String(150), nullable=True)
+    representante_legal = db.Column(db.String(150), nullable=True)
+
+    # CHECK: 'responsable_iva','no_responsable_iva'
+    tipo_regimen = db.Column(db.String(25), nullable=False, default="responsable_iva")
+
+    # Relación opcional para acceder a las sedes desde la empresa
+    sedes = db.relationship("Sedes", backref="empresa", lazy=True)
+
+    def to_dict(self):
+        return {
+            "id_empresa": self.id_empresa,
+            "nit": self.nit,
+            "razon_social": self.razon_social,
+            "nombre_comercial": self.nombre_comercial,
+            "direccion": self.direccion,
+            "ciudad": self.ciudad,
+            "telefono": self.telefono,
+            "email": self.email,
+            "representante_legal": self.representante_legal,
+            "tipo_regimen": self.tipo_regimen,
+        }
+
+
+class Sedes(db.Model):
+    __tablename__ = "sedes"
+
+    id_sede = db.Column(db.String(100), primary_key=True)
+    id_empresa = db.Column(
+        db.String(100),
+        db.ForeignKey("empresa.id_empresa", onupdate="CASCADE", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    nombre_sede = db.Column(db.String(100), nullable=False)
+
+    # CHECK: 'bodega','planta','punto_venta','administrativa'
+    tipo_sede = db.Column(db.String(30), nullable=False, default="bodega")
+    ciudad = db.Column(db.String(100), nullable=False)
+    direccion = db.Column(db.String(255), nullable=False)
+    telefono = db.Column(db.String(20), nullable=True)
+    es_principal = db.Column(db.Boolean, nullable=False, default=False)
+    fecha_apertura = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+
+    # Relación opcional para acceder a los camiones desde la sede
+    camiones = db.relationship("Camion", backref="sede", lazy=True)
+
+    def to_dict(self):
+        return {
+            "id_sede": self.id_sede,
+            "id_empresa": self.id_empresa,
+            "nombre_sede": self.nombre_sede,
+            "tipo_sede": self.tipo_sede,
+            "ciudad": self.ciudad,
+            "direccion": self.direccion,
+            "telefono": self.telefono,
+            "es_principal": self.es_principal,
+            "fecha_apertura": self.fecha_apertura.isoformat()
+            if self.fecha_apertura
+            else None,
+        }
 
 
 class Camion(db.Model):

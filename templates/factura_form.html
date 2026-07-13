@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Generar Factura - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Generar Factura</h1>
+    <a href="{{ url_for('pedidos_views.ver_pedido_detalle', id_pedido=pedido.id_pedido) }}" class="btn btn-secondary">Volver al Pedido</a>
+</div>
+
+{% if error %}
+<div class="alert-error">{{ error }}</div>
+{% endif %}
+
+<div class="detail-card">
+    <div class="detail-section">
+        <h2>Pedido {{ pedido.id_pedido }}</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Cliente:</label>
+                <p>{{ cliente.nombre_razon_social if cliente else pedido.id_cliente }}</p>
+            </div>
+            <div class="info-item">
+                <label>Estado del Pedido:</label>
+                <p><span class="badge badge-{{ pedido.estado }}">{{ pedido.estado }}</span></p>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in pedido.detalles %}
+                <tr>
+                    <td>{{ productos[detalle.id_producto].nombre if detalle.id_producto in productos else detalle.id_producto }}</td>
+                    <td>{{ detalle.cantidad_solicitada }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if pedido.estado == 'verificado' %}
+<div class="detail-card">
+    <form method="POST" class="form-grid">
+
+        <div class="form-group full-width"><h2>Datos de la Factura</h2></div>
+
+        <div class="form-group">
+            <label for="id_factura">ID Factura *</label>
+            <input type="text" id="id_factura" name="id_factura" placeholder="Ej: FAC-001" required>
+        </div>
+
+        <div class="form-group">
+            <label for="numero_factura">Número de Factura *</label>
+            <input type="text" id="numero_factura" name="numero_factura" placeholder="Ej: MSAS-0001" required>
+        </div>
+
+        <div class="form-group">
+            <label for="id_empresa">ID Empresa *</label>
+            <input type="text" id="id_empresa" name="id_empresa" placeholder="Ej: EMP-01" required>
+        </div>
+
+        <div class="form-group">
+            <label for="metodo_pago">Método de Pago</label>
+            <select id="metodo_pago" name="metodo_pago">
+                <option value="efectivo">Efectivo</option>
+                <option value="tarjeta">Tarjeta</option>
+                <option value="transferencia">Transferencia</option>
+                <option value="contraentrega">Contraentrega</option>
+            </select>
+        </div>
+
+        <div class="form-group full-width"><h2>Datos del Envío</h2></div>
+
+        <div class="form-group">
+            <label for="id_envio">ID Envío *</label>
+            <input type="text" id="id_envio" name="id_envio" placeholder="Ej: ENV-001" required>
+        </div>
+
+        <div class="form-group">
+            <label for="id_sede_origen">Sede de Origen *</label>
+            <input type="text" id="id_sede_origen" name="id_sede_origen" placeholder="Ej: SEDE-CALI" required>
+        </div>
+
+        <div class="form-group">
+            <label for="direccion_origen">Dirección de Origen *</label>
+            <input type="text" id="direccion_origen" name="direccion_origen" required>
+        </div>
+
+        <div class="form-group">
+            <label for="direccion_destino">Dirección de Destino *</label>
+            <input type="text" id="direccion_destino" name="direccion_destino" required>
+        </div>
+
+        <div class="form-group">
+            <label for="fecha_entrega_estimada">Fecha Entrega Estimada</label>
+            <input type="date" id="fecha_entrega_estimada" name="fecha_entrega_estimada">
+            <small>Opcional. Por defecto: hoy + 5 días.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="tipo_envio">Tipo de Envío *</label>
+            <select id="tipo_envio" name="tipo_envio" required>
+                <option value="nacional">Nacional</option>
+                <option value="internacional">Internacional</option>
+            </select>
+        </div>
+
+        <!-- Campos de envío NACIONAL -->
+        <div class="form-group envio-nacional">
+            <label for="departamento">Departamento *</label>
+            <input type="text" id="departamento" name="departamento" value="Valle del Cauca">
+        </div>
+        <div class="form-group envio-nacional">
+            <label for="ciudad">Ciudad *</label>
+            <input type="text" id="ciudad" name="ciudad" value="Cali">
+        </div>
+        <div class="form-group envio-nacional">
+            <label for="codigo_postal">Código Postal *</label>
+            <input type="text" id="codigo_postal" name="codigo_postal" value="760001">
+        </div>
+        <div class="form-group envio-nacional">
+            <label for="transportadora_local">Transportadora Local *</label>
+            <input type="text" id="transportadora_local" name="transportadora_local" placeholder="Ej: Servientrega">
+        </div>
+
+        <!-- Campos de envío INTERNACIONAL -->
+        <div class="form-group envio-internacional" style="display:none;">
+            <label for="pais_destino">País Destino *</label>
+            <input type="text" id="pais_destino" name="pais_destino">
+        </div>
+        <div class="form-group envio-internacional" style="display:none;">
+            <label for="aduana">Aduana</label>
+            <input type="text" id="aduana" name="aduana">
+        </div>
+        <div class="form-group envio-internacional" style="display:none;">
+            <label for="numero_tracking_internacional">N.º Tracking Internacional *</label>
+            <input type="text" id="numero_tracking_internacional" name="numero_tracking_internacional">
+        </div>
+        <div class="form-group envio-internacional" style="display:none;">
+            <label for="costo_aduana">Costo Aduana</label>
+            <input type="number" step="0.01" id="costo_aduana" name="costo_aduana" value="0">
+        </div>
+        <div class="form-group envio-internacional" style="display:none;">
+            <label for="divisa">Divisa</label>
+            <input type="text" id="divisa" name="divisa" value="USD">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Generar Factura y Envío</button>
+            <a href="{{ url_for('pedidos_views.ver_pedido_detalle', id_pedido=pedido.id_pedido) }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<script>
+(function () {
+    const tipoEnvio = document.getElementById("tipo_envio");
+    const nacionales = document.querySelectorAll(".envio-nacional");
+    const internacionales = document.querySelectorAll(".envio-internacional");
+
+    function alternar() {
+        const esNacional = tipoEnvio.value === "nacional";
+        nacionales.forEach(function (el) {
+            el.style.display = esNacional ? "" : "none";
+            el.querySelectorAll("input").forEach(function (i) { i.required = esNacional; });
+        });
+        internacionales.forEach(function (el) {
+            el.style.display = esNacional ? "none" : "";
+            // 'aduana' es opcional; el resto requerido en internacional
+            el.querySelectorAll("input").forEach(function (i) {
+                if (i.id !== "aduana") i.required = !esNacional;
+            });
+        });
+    }
+
+    tipoEnvio.addEventListener("change", alternar);
+    alternar();
+})();
+</script>
+{% endif %}
+{% endblock %}

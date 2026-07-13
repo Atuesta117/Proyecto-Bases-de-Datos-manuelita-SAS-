@@ -446,3 +446,115 @@ footer p {
 .mb-3 {
     margin-bottom: 1.5rem;
 }
+
+/* ============= BADGES DE ESTADO (pedidos y facturas) ============= */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    color: #fff;
+    background: #6b7280;
+}
+
+.badge-pendiente {
+    background: #d97706;
+}
+
+.badge-verificado {
+    background: #2563eb;
+}
+
+.badge-confirmado {
+    background: #16a34a;
+}
+
+.badge-rechazado,
+.badge-anulada,
+.badge-anulado {
+    background: #dc2626;
+}
+
+/* ============= ALERTA INFORMATIVA ============= */
+.alert-info {
+    background: #e0f2fe;
+    color: #075985;
+    border-left: 5px solid #0284c7;
+    padding: 1rem 1.25rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+}
+
+/* ============= UTILIDAD DE GRID ============= */
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* ============= FILAS DE ITEMS (formulario de pedido) ============= */
+/* .item-row es un <tr> dentro de una <table>, no debe ser grid/flex */
+.item-row td {
+    vertical-align: middle;
+}
+
+.item-row select,
+.item-row input {
+    width: 100%;
+}
+
+.btn-quitar-item {
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 0.9rem;
+    cursor: pointer;
+    font-weight: 600;
+    height: fit-content;
+}
+
+.btn-quitar-item:hover {
+    background: #b91c1c;
+}
+
+/* ============= SECCIONES DE ENVIO (formulario de factura) ============= */
+.envio-nacional,
+.envio-internacional {
+    padding: 1rem 1.25rem;
+    margin-top: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+.envio-internacional {
+    border-left: 5px solid #0284c7;
+}
+
+/* ============= TABLA DE ITEMS Y TOTALES (detalles) ============= */
+.item-row-table td {
+    vertical-align: middle;
+}
+
+.totales {
+    margin-top: 1.5rem;
+    margin-left: auto;
+    max-width: 320px;
+}
+
+.totales .total-linea {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.totales .total-linea.total-final {
+    font-weight: 700;
+    font-size: 1.15rem;
+    border-bottom: none;
+    border-top: 2px solid #111827;
+    margin-top: 0.25rem;
+    padding-top: 0.75rem;
+}

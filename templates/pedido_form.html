@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Pedido - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Nuevo Pedido</h1>
+    <a href="{{ url_for('pedidos_views.ver_pedidos') }}" class="btn btn-secondary">Volver</a>
+</div>
+
+<div class="detail-card">
+    {% if error %}
+    <div class="alert-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" class="form-grid">
+
+        <div class="form-group">
+            <label for="id_pedido">ID Pedido *</label>
+            <input type="text" id="id_pedido" name="id_pedido" placeholder="Ej: PED-001" required>
+        </div>
+
+        <div class="form-group">
+            <label for="id_cliente">Cliente *</label>
+            <select id="id_cliente" name="id_cliente" required>
+                <option value="">-- Selecciona un cliente --</option>
+                {% for cliente in clientes %}
+                <option value="{{ cliente.id_cliente }}">
+                    {{ cliente.nombre_razon_social }} ({{ cliente.id_cliente }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group full-width">
+            <label for="observaciones">Observaciones</label>
+            <input type="text" id="observaciones" name="observaciones" placeholder="Opcional">
+        </div>
+
+        <div class="form-group full-width">
+            <label>Productos del pedido *</label>
+            <table class="table" id="tabla-items">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th style="width: 160px;">Cantidad</th>
+                        <th style="width: 80px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="items-body">
+                    <tr class="item-row">
+                        <td>
+                            <select name="item_producto" required>
+                                <option value="">-- Selecciona un producto --</option>
+                                {% for producto in productos %}
+                                <option value="{{ producto.id_producto }}">
+                                    {{ producto.nombre }} (${{ producto.precio }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" name="item_cantidad" min="1" value="1" required>
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-small btn-danger btn-quitar-item">Quitar</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <a href="#" class="btn btn-small btn-secondary" id="btn-agregar-item">+ Agregar producto</a>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Crear Pedido</button>
+            <a href="{{ url_for('pedidos_views.ver_pedidos') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<script>
+(function () {
+    const cuerpo = document.getElementById("items-body");
+    const btnAgregar = document.getElementById("btn-agregar-item");
+
+    function engancharQuitar(fila) {
+        const boton = fila.querySelector(".btn-quitar-item");
+        if (!boton) return;
+        boton.addEventListener("click", function (evento) {
+            evento.preventDefault();
+            // Siempre debe quedar al menos una fila de producto
+            if (cuerpo.querySelectorAll(".item-row").length > 1) {
+                fila.remove();
+            }
+        });
+    }
+
+    btnAgregar.addEventListener("click", function (evento) {
+        evento.preventDefault();
+        const plantilla = cuerpo.querySelector(".item-row");
+        const clon = plantilla.cloneNode(true);
+        clon.querySelector("select").value = "";
+        clon.querySelector("input").value = "1";
+        cuerpo.appendChild(clon);
+        engancharQuitar(clon);
+    });
+
+    cuerpo.querySelectorAll(".item-row").forEach(engancharQuitar);
+})();
+</script>
+{% endblock %}

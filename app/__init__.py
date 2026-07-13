@@ -41,9 +41,13 @@ def create_app():
     # --- Blueprints de vistas HTML (server-side, Jinja) ---
     from app.routes.clientes_views import clientes_bp
     from app.routes.proveedores_views import proveedores_bp
+    from app.routes.pedidos_views import pedidos_bp
+    from app.routes.facturas_views import facturas_bp
 
     app.register_blueprint(clientes_bp)
     app.register_blueprint(proveedores_bp)
+    app.register_blueprint(pedidos_bp)
+    app.register_blueprint(facturas_bp)
 
     # --- Ruta de inicio ---
     from flask import render_template

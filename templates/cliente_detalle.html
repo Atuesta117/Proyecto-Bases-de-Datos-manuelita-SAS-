@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}{{ cliente.nombre_razon_social }} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>{{ cliente.nombre_razon_social }}</h1>
+    <div class="actions">
+        <a href="{{ url_for('clientes.ver_clientes') }}" class="btn btn-secondary">Volver</a>
+        <a href="#" class="btn btn-warning">Editar</a>
+        <a href="#" class="btn btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</a>
+    </div>
+</div>
+
+<div class="detail-card">
+    <div class="detail-section">
+        <h2>Información General</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>ID Cliente:</label>
+                <p>{{ cliente.id_cliente }}</p>
+            </div>
+            <div class="info-item">
+                <label>Tipo de Documento:</label>
+                <p>{{ cliente.tipo_documento }}</p>
+            </div>
+            <div class="info-item">
+                <label>Número de Identificación:</label>
+                <p>{{ cliente.numero_identificacion }}</p>
+            </div>
+            <div class="info-item">
+                <label>Nombre o Razón Social:</label>
+                <p>{{ cliente.nombre_razon_social }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-section">
+        <h2>Contacto</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Email:</label>
+                <p><a href="mailto:{{ cliente.email }}">{{ cliente.email }}</a></p>
+            </div>
+            <div class="info-item">
+                <label>Ciudad:</label>
+                <p>{{ cliente.ciudad }}</p>
+            </div>
+        </div>
+    </div>
+
+    {% if cliente.telefono %}
+    <div class="detail-section">
+        <h2>Información Adicional</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Teléfono:</label>
+                <p>{{ cliente.telefono }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

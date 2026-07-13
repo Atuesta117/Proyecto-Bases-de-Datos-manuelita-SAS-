@@ -1,0 +1,29 @@
+# Entornos virtuales
+venv/
+env/
+.venv/
+
+# Variables de entorno
+.env
+
+# Bytecode y cache de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribución / empaquetado
+build/
+dist/
+*.egg-info/
+
+# Bases de datos locales / logs
+*.sqlite3
+*.log
+
+# Configuración de editores / IDEs
+.vscode/
+.idea/
+
+# Otros
+.DS_Store
+instance/

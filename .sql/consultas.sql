@@ -1,4 +1,4 @@
--- CONSULTA 1: Ventas Totales e Impacto en Transporte por Categoría de Producto
+- CONSULTA 1: Ventas Totales e Impacto en Transporte por Categoría de Producto
 -- Objetivo: Mostrar qué categorías generan más volumen de pedidos y demandan mayor peso de carga.
 SELECT 
     p.categoria,
@@ -69,7 +69,7 @@ ORDER BY l.fecha_vencimiento ASC;
 
 -- CONSULTA 6: Ranking de Clientes VIP y Métodos de Pago Preferidos
 -- Objetivo: Listar los 5 clientes que más han gastado en pedidos y su modalidad de pago principal.
-SELECT 
+S LECT 
     u.id_usuario,
     u.nombre,
     u.apellido,

@@ -1,5 +1,6 @@
 from app import db
 from datetime import date
+from datetime import datetime
 
 
 class Empresa(db.Model):

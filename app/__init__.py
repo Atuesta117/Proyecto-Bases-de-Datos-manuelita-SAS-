@@ -42,9 +42,11 @@ def create_app():
     from app.routes.clientes_views import clientes_bp
     from app.routes.proveedores_views import proveedores_bp
 
+    from app.routes.ordenes_views import ordenes_vistas_bp
+
     app.register_blueprint(clientes_bp)
     app.register_blueprint(proveedores_bp)
-
+    app.register_blueprint(ordenes_vistas_bp)
     # --- Ruta de inicio ---
     from flask import render_template
 

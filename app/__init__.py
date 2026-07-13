@@ -26,17 +26,17 @@ def create_app():
     # --- Blueprints de API JSON (para Postman / frontend por fetch) ---
     from app.routes.clientes_routes import clientes_api_bp
     from app.routes.proveedores_routes import proveedores_api_bp
-    from app.routes.productos_routes import productos_bp
-    from app.routes.ordenes_routes import ordenes_bp
-    from app.routes.pedidos_routes import pedidos_bp
-    from app.routes.facturas_routes import facturas_bp
+    from app.routes.productos_routes import productos_api_bp
+    from app.routes.ordenes_routes import ordenes_api_bp
+    from app.routes.pedidos_routes import pedidos_api_bp
+    from app.routes.facturas_routes import facturas_api_bp
 
     app.register_blueprint(clientes_api_bp)
     app.register_blueprint(proveedores_api_bp)
-    app.register_blueprint(productos_bp)
-    app.register_blueprint(ordenes_bp)
-    app.register_blueprint(pedidos_bp)
-    app.register_blueprint(facturas_bp)
+    app.register_blueprint(productos_api_bp)
+    app.register_blueprint(ordenes_api_bp)
+    app.register_blueprint(pedidos_api_bp)
+    app.register_blueprint(facturas_api_bp)
 
     # --- Blueprints de vistas HTML (server-side, Jinja) ---
     from app.routes.clientes_views import clientes_bp

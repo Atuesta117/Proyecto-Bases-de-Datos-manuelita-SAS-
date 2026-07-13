@@ -1,16 +1,16 @@
 from flask import Blueprint, request, jsonify
 from app.services import orden_proveedor_service
 
-ordenes_bp = Blueprint("ordenes", __name__, url_prefix="/api/ordenes")
+ordenes_api_bp = Blueprint("ordenes", __name__, url_prefix="/api/ordenes")
 
 
-@ordenes_bp.route("/", methods=["GET"])
+@ordenes_api_bp.route("/", methods=["GET"])
 def listar_ordenes():
     ordenes = orden_proveedor_service.obtener_todas_las_ordenes()
     return jsonify([o.to_dict() for o in ordenes]), 200
 
 
-@ordenes_bp.route("/", methods=["POST"])
+@ordenes_api_bp.route("/", methods=["POST"])
 def registrar_orden():
     data = request.get_json()
     campos = ["id_orden", "id_sede", "id_proveedor", "lugar_entrega", "items"]
@@ -26,7 +26,7 @@ def registrar_orden():
         return jsonify({"error": str(e)}), 400
 
 
-@ordenes_bp.route("/<string:id_orden>/recibir", methods=["POST"])
+@ordenes_api_bp.route("/<string:id_orden>/recibir", methods=["POST"])
 def recibir_pedido(id_orden):
     """El frontend le pega aquí cuando el camión llega y dan clic en 'Recibir'"""
     data = request.get_json() or {}

@@ -74,10 +74,17 @@
                    value="{{ camion.kilometraje if camion else 0 }}">
         </div>
 
-        <div class="form-group">
-            <label for="id_sede">ID Sede (Asociada)</label>
-            <input type="text" id="id_sede" name="id_sede"
-                   value="{{ camion.id_sede if (camion and camion.id_sede) else '' }}">
+       <div class="form-group">
+            <label for="id_sede">Sede (Asociada)</label>
+            <select id="id_sede" name="id_sede">
+                <option value="">-- Sin sede / Operación Externa --</option>
+                {% for sede in sedes %}
+                    <option value="{{ sede.id_sede }}"
+                        {% if camion and camion.id_sede == sede.id_sede %}selected{% endif %}>
+                        {{ sede.nombre_sede }} ({{ sede.ciudad }})
+                    </option>
+                {% endfor %}
+            </select>
         </div>
 
         <div class="form-actions" style="margin-top: 20px;">

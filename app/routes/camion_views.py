@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, abort
 from app.services import camion_service
 import re
-from app.models.logistica import Camion
+from app.models.logistica import Camion, Sedes # Se importa Sedes de logistica
 
 camiones_bp = Blueprint("camiones", __name__, url_prefix="/camiones")
 
@@ -22,9 +22,8 @@ def _form_a_dict(form):
 def generar_siguiente_id_camion():
     """
     Busca el último ID de camión con formato CAM-XXXXXX en la base de datos,
-    extrae el número, le suma 1 y formatea el nuevo ID sugerido (ej: CAM-000045).
+    extrae el número, le suma 1 y formatea el nuevo ID sugerido.
     """
-    # Buscamos todos los camiones cuyo ID comience con "CAM-"
     camiones = Camion.query.filter(Camion.id_camion.like("CAM-%")).all()
 
     if not camiones:
@@ -32,7 +31,6 @@ def generar_siguiente_id_camion():
 
     max_numero = 0
     for c in camiones:
-        # Extraemos la sección numérica secuencial de 6 dígitos
         match = re.match(r"CAM-(\d+)", c.id_camion)
         if match:
             numero = int(match.group(1))
@@ -40,7 +38,6 @@ def generar_siguiente_id_camion():
                 max_numero = numero
 
     siguiente_numero = max_numero + 1
-    # Formatea con ceros a la izquierda garantizando un ancho fijo de 6 dígitos
     return f"CAM-{siguiente_numero:06d}"
 
 
@@ -52,6 +49,9 @@ def ver_camiones():
 
 @camiones_bp.route("/nuevo", methods=["GET", "POST"])
 def crear_camion_view():
+    # Obtenemos la lista de todas las sedes para el desplegable
+    sedes = Sedes.query.all()
+
     if request.method == "POST":
         data = _form_a_dict(request.form)
         try:
@@ -60,23 +60,24 @@ def crear_camion_view():
                 url_for("camiones.ver_camion_detalle", id_camion=nuevo.id_camion)
             )
         except ValueError as e:
-            # Si ocurre un error, recalculamos el ID sugerido para renderizar nuevamente
             siguiente_id = generar_siguiente_id_camion()
             return render_template(
                 "camion_form.html",
                 camion=None,
                 siguiente_id=siguiente_id,
+                sedes=sedes,
                 error=str(e)
             ), 400
 
-    # Carga inicial (GET): calculamos el ID secuencial sugerido
     siguiente_id = generar_siguiente_id_camion()
     return render_template(
         "camion_form.html",
         camion=None,
         siguiente_id=siguiente_id,
+        sedes=sedes,
         error=None
     )
+
 
 @camiones_bp.route("/<string:id_camion>")
 def ver_camion_detalle(id_camion):
@@ -92,10 +93,9 @@ def editar_camion_view(id_camion):
     if not camion:
         abort(404)
 
+    sedes = Sedes.query.all()
+
     if request.method == "POST":
-        # placa va deshabilitada en el formulario (campo crítico protegido);
-        # el servicio la ignora aunque venga en el dict, así que no hace
-        # falta filtrarla aquí.
         data = _form_a_dict(request.form)
         try:
             camion_service.actualizar_camion(id_camion, data)
@@ -104,7 +104,10 @@ def editar_camion_view(id_camion):
             )
         except ValueError as e:
             return render_template(
-                "camion_form.html", camion=camion, error=str(e)
+                "camion_form.html",
+                camion=camion,
+                sedes=sedes,
+                error=str(e)
             ), 400
 
-    return render_template("camion_form.html", camion=camion, error=None)
+    return render_template("camion_form.html", camion=camion, sedes=sedes, error=None)

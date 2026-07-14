@@ -1,21 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, abort
 from app.services import conductor_service
 from app import db
-from sqlalchemy import text
 import re
-from app.models.logistica import Conductor
+# Importamos tanto Conductor como Sedes desde el archivo de logística
+from app.models.logistica import Conductor, Sedes
 
 conductores_bp = Blueprint("conductores", __name__, url_prefix="/conductores")
-
-
-def obtener_sedes_raw():
-    """Obtiene las sedes directamente de la base de datos."""
-    query = text("SELECT id_sede, nombre_sede, ciudad FROM SEDES")
-    resultado = db.session.execute(query)
-    return [
-        {"id_sede": row.id_sede, "nombre_sede": row.nombre_sede, "ciudad": row.ciudad}
-        for row in resultado
-    ]
 
 
 def _form_a_dict(form):
@@ -37,7 +27,6 @@ def generar_siguiente_id_conductor():
     Busca el último ID de conductor con formato COND-XXXXXX en la base de datos,
     extrae el número, le suma 1 y formatea el nuevo ID sugerido (ej: COND-000045).
     """
-    # Buscamos todos los conductores cuyo ID comience con "COND-"
     conductores = Conductor.query.filter(Conductor.id_conductor.like("COND-%")).all()
 
     if not conductores:
@@ -45,7 +34,6 @@ def generar_siguiente_id_conductor():
 
     max_numero = 0
     for c in conductores:
-        # Extraemos la sección numérica secuencial de 6 dígitos
         match = re.match(r"COND-(\d+)", c.id_conductor)
         if match:
             numero = int(match.group(1))
@@ -53,7 +41,6 @@ def generar_siguiente_id_conductor():
                 max_numero = numero
 
     siguiente_numero = max_numero + 1
-    # Formatea con ceros a la izquierda garantizando un ancho de 6 dígitos
     return f"COND-{siguiente_numero:06d}"
 
 
@@ -65,7 +52,7 @@ def ver_conductores():
 
 @conductores_bp.route("/nuevo", methods=["GET", "POST"])
 def crear_conductor_view():
-    sedes = obtener_sedes_raw() # Tu función de carga de sedes directas
+    sedes = Sedes.query.all()
 
     if request.method == "POST":
         data = _form_a_dict(request.form)
@@ -78,7 +65,6 @@ def crear_conductor_view():
                 )
             )
         except ValueError as e:
-            # Recalculamos si hay un error para volver a pintar el formulario
             siguiente_id = generar_siguiente_id_conductor()
             return render_template(
                 "conductor_form.html",
@@ -88,7 +74,6 @@ def crear_conductor_view():
                 error=str(e)
             ), 400
 
-    # Carga inicial (GET): Generamos el ID consecutivo sugerido
     siguiente_id = generar_siguiente_id_conductor()
     return render_template(
         "conductor_form.html",
@@ -113,7 +98,7 @@ def editar_conductor_view(id_conductor):
     if not conductor:
         abort(404)
 
-    sedes = obtener_sedes_raw()  # Cargamos las sedes de la BD
+    sedes = Sedes.query.all()
 
     if request.method == "POST":
         data = _form_a_dict(request.form)

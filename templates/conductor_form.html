@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}{% if conductor %}Editar Conductor{% else %}Nuevo Conductor{% endif %} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>{% if conductor %}Editar Conductor{% else %}Nuevo Conductor{% endif %}</h1>
+    <a href="{{ url_for('conductores.ver_conductores') }}" class="btn btn-secondary">Volver</a>
+</div>
+
+<div class="detail-card">
+    {% if error %}
+    <div class="alert-error" style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 12px 20px; border-radius: 4px; margin-bottom: 20px;">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" class="form-grid">
+
+        <div class="form-group">
+            <label for="id_conductor">ID Conductor *</label>
+            <input type="text" id="id_conductor" name="id_conductor"
+                   value="{{ conductor.id_conductor if conductor else (siguiente_id if siguiente_id else '') }}"
+                   readonly
+                   style="background-color: #e9ecef; cursor: not-allowed;"
+                   required>
+            {% if conductor %}
+            <small>No editable (identificador de sistema interno)</small>
+            {% else %}
+            <small>Autogenerado por el sistema</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="cedula">Cédula de Ciudadanía *</label>
+            <input type="text" id="cedula" name="cedula"
+                   value="{{ conductor.cedula if conductor else '' }}"
+                   {% if conductor %}readonly style="background-color: #e9ecef; cursor: not-allowed;"{% endif %} required>
+            {% if conductor %}
+            <small>No editable (campo crítico legal protegido)</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="nombre">Nombre *</label>
+            <input type="text" id="nombre" name="nombre"
+                   value="{{ conductor.nombre if conductor else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="apellido">Apellido *</label>
+            <input type="text" id="apellido" name="apellido"
+                   value="{{ conductor.apellido if conductor else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="telefono">Teléfono *</label>
+            <input type="text" id="telefono" name="telefono"
+                   value="{{ conductor.telefono if conductor else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="licencia">Número de Licencia *</label>
+            <input type="text" id="licencia" name="licencia" style="text-transform: uppercase;"
+                   value="{{ conductor.licencia if conductor else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="fecha_vencimiento_licencia">Fecha de Vencimiento de Licencia *</label>
+            <input type="date" id="fecha_vencimiento_licencia" name="fecha_vencimiento_licencia"
+                   value="{{ conductor.fecha_vencimiento_licencia if conductor else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="id_sede">Sede Asociada</label>
+            <select id="id_sede" name="id_sede">
+                <option value="" {% if not conductor or not conductor.id_sede %}selected{% endif %}>-- Sin Sede (No Asignada) --</option>
+                {% if sedes %}
+                    {% for sede in sedes %}
+                    <option value="{{ sede.id_sede }}"
+                        {% if conductor and conductor.id_sede == sede.id_sede %}selected{% endif %}>
+                        {{ sede.nombre_sede }} ({{ sede.ciudad }})
+                    </option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+            <small>Sede física a la que pertenece el conductor.</small>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; margin-top: 25px;">
+            <input type="checkbox" id="disponible" name="disponible" style="width: auto; margin-right: 10px;"
+                   {% if not conductor or conductor.disponible %}checked{% endif %}>
+            <label for="disponible" style="margin-bottom: 0; cursor: pointer;">¿Está disponible para asignación de rutas?</label>
+        </div>
+
+        <div class="form-actions" style="margin-top: 20px; grid-column: span 2;">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="{{ url_for('conductores.ver_conductores') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Conductores - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Lista de Conductores</h1>
+    <a href="{{ url_for('conductores.crear_conductor_view') }}" class="btn btn-primary">+ Nuevo Conductor</a>
+</div>
+
+{% if conductores %}
+<div class="table-responsive" data-api-base="/api/conductores">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID Conductor</th>
+                <th>Nombre Completo</th>
+                <th>Cédula</th>
+                <th>Teléfono</th>
+                <th>Licencia</th>
+                <th>Vence Licencia</th>
+                <th>Disponibilidad</th>
+                <th>ID Sede</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for conductor in conductores %}
+            <tr>
+                <td>{{ conductor.id_conductor }}</td>
+                <td><strong>{{ conductor.nombre }} {{ conductor.apellido }}</strong></td>
+                <td>{{ conductor.cedula }}</td>
+                <td>{{ conductor.telefono }}</td>
+                <td><span style="text-transform: uppercase;">{{ conductor.licencia }}</span></td>
+                <td>{{ conductor.fecha_vencimiento_licencia }}</td>
+                <td>
+                    {% if conductor.disponible %}
+                        <span class="badge badge-success" style="background-color: #28a745; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85em;">Disponible</span>
+                    {% else %}
+                        <span class="badge badge-danger" style="background-color: #dc3545; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85em;">No Disponible</span>
+                    {% endif %}
+                </td>
+                <td>{{ conductor.id_sede or 'N/A' }}</td>
+                <td class="actions">
+                    <a href="{{ url_for('conductores.ver_conductor_detalle', id_conductor=conductor.id_conductor) }}" class="btn btn-small btn-info">Ver</a>
+                    <a href="{{ url_for('conductores.editar_conductor_view', id_conductor=conductor.id_conductor) }}" class="btn btn-small btn-warning">Editar</a>
+                    <a href="#" class="btn btn-small btn-danger btn-eliminar"
+                       data-id="{{ conductor.id_conductor }}"
+                       data-nombre="{{ conductor.nombre }} {{ conductor.apellido }}">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{# Script integrado para el manejo de eliminación asíncrona mediante la API del microservicio #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const eliminarBtns = document.querySelectorAll('.btn-eliminar');
+    
+    eliminarBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const idConductor = this.getAttribute('data-id');
+            const nombreCompleto = this.getAttribute('data-nombre');
+            
+            if (confirm(`¿Está seguro de que desea eliminar al conductor "${nombreCompleto}"?`)) {
+                fetch(`/api/conductores/${idConductor}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('El conductor ha sido eliminado exitosamente.');
+                        window.location.reload();
+                    } else {
+                        return response.json().then(err => {
+                            throw new Error(err.error || 'Error al intentar eliminar el conductor.');
+                        });
+                    }
+                })
+                .catch(error => {
+                    alert(`No se pudo eliminar el conductor: ${error.message}`);
+                });
+            }
+        });
+    });
+});
+</script>
+
+{% else %}
+<div class="empty-state">
+    <p>No hay conductores registrados en el sistema de logística.</p>
+    <a href="{{ url_for('conductores.crear_conductor_view') }}" class="btn btn-primary">+ Registrar Primer Conductor</a>
+</div>
+{% endif %}
+{% endblock %}

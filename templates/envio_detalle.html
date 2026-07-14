@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Ficha de Envío {{ envio.id_envio }} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Ficha Técnica de Envío: {{ envio.id_envio }}</h1>
+    <a href="{{ url_for('envios.ver_envios') }}" class="btn btn-secondary">Volver</a>
+</div>
+
+<!-- SECCIÓN 1: DATOS INMUTABLES DEL ENVÍO (Mismo diseño de Formulario de Clientes) -->
+<div class="detail-card">
+    <h2 style="margin-bottom: 20px;">1. Datos de Origen, Destino y Estado</h2>
+    <div class="form-grid">
+        <div class="form-group">
+            <label>ID Envío</label>
+            <input type="text" value="{{ envio.id_envio }}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Pedido Confirmado Relacionado</label>
+            <input type="text" value="{{ envio.id_pedido_confirmado }}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Estado Actual</label>
+            <input type="text" value="{{ envio.estado_envio | replace('_', ' ') | title }}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Tipo de Envío</label>
+            <input type="text" value="{{ envio.tipo_envio | title }}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Fecha Estimada de Entrega</label>
+            <input type="text" value="{{ envio.fecha_entrega_estimada }}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Sede de Origen</label>
+            <input type="text" value="{{ envio.id_sede_origen or 'Despacho Directo de Fábrica' }}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Dirección de Salida</label>
+            <input type="text" value="{{ envio.direccion_origen }}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Dirección de Entrega</label>
+            <input type="text" value="{{ envio.direccion_destino }}" readonly>
+        </div>
+    </div>
+
+    <h2 style="margin-top: 30px; margin-bottom: 20px;">2. Especificaciones de Ruta</h2>
+    <div class="form-grid">
+        {% if envio.tipo_envio == 'nacional' and envio.detalle %}
+            <div class="form-group">
+                <label>Ciudad Destino</label>
+                <input type="text" value="{{ envio.detalle.ciudad }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Departamento</label>
+                <input type="text" value="{{ envio.detalle.departamento }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Código Postal</label>
+                <input type="text" value="{{ envio.detalle.codigo_postal }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Transportadora Asignada</label>
+                <input type="text" value="{{ envio.detalle.transportadora_local }}" readonly>
+            </div>
+        {% elif envio.tipo_envio == 'internacional' and envio.detalle %}
+            <div class="form-group">
+                <label>País Destino</label>
+                <input type="text" value="{{ envio.detalle.pais_destino }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Aduana de Control</label>
+                <input type="text" value="{{ envio.detalle.aduana or 'Sin Aduana Registrada' }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Nº Tracking Internacional</label>
+                <input type="text" value="{{ envio.detalle.numero_tracking_internacional }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Costo de Aduana (USD)</label>
+                <input type="text" value="${{ envio.detalle.costo_aduana }} ({{ envio.detalle.divisa }})" readonly>
+            </div>
+        {% else %}
+            <div class="form-group" style="grid-column: span 2;">
+                <p class="text-muted">No se registran datos de logística de ruta adicionales para este envío.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- SECCIÓN 2: LOGÍSTICA ACTIVA (ASIGNACIÓN DE TRANSPORTE) -->
+<div class="detail-card" style="margin-top: 30px;">
+    <h2 style="margin-bottom: 20px;">3. Programación y Asignación de Camiones</h2>
+    
+    <form id="form-asignar-camion" class="form-grid">
+        <div class="form-group">
+            <label for="id_envio_camion_nor">Código de Ruta Único *</label>
+            <input type="text" id="id_envio_camion_nor" name="id_envio_camion_nor" placeholder="Ej: RUTA-100" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="id_camion">Camión Disponible *</label>
+            <select id="id_camion" name="id_camion" required>
+                <option value="">-- Selecciona un Camión --</option>
+                {% for camion in camiones %}
+                    <option value="{{ camion.id_camion }}">{{ camion.placa }} - {{ camion.modelo }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="fecha_carga">Fecha de Carga Operativa</label>
+            <input type="date" id="fecha_carga" name="fecha_carga">
+        </div>
+
+        <div class="form-actions" style="grid-column: span 2; margin-top: 10px;">
+            <button type="submit" class="btn btn-primary">Programar Despacho</button>
+        </div>
+    </form>
+
+    <h3 style="margin-top: 40px; margin-bottom: 15px;">Transporte Programado Activo</h3>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Código de Ruta</th>
+                    <th>ID Camión</th>
+                    <th>Fecha de Carga</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="lista-asignaciones">
+                {% if asignaciones %}
+                    {% for asignacion in asignaciones %}
+                    <tr id="item-{{ asignacion.id_envio_camion_nor }}">
+                        <td><strong>{{ asignacion.id_envio_camion_nor }}</strong></td>
+                        <td>{{ asignacion.id_camion }}</td>
+                        <td>{{ asignacion.fecha_carga }}</td>
+                        <td class="actions">
+                            <button class="btn btn-small btn-danger" onclick="desasignarCamion('{{ asignacion.id_envio_camion_nor }}')">Remover</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr id="empty-row">
+                        <td colspan="4" style="text-align: center; padding: 20px;" class="text-muted">No se han asignado camiones para este despacho.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.getElementById('form-asignar-camion').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = {
+            id_envio_camion_nor: document.getElementById('id_envio_camion_nor').value,
+            id_camion: document.getElementById('id_camion').value,
+            fecha_carga: document.getElementById('fecha_carga').value || null
+        };
+
+        fetch('{{ url_for("envios.asignar_camion", id_envio=envio.id_envio) }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(resData => {
+            if(resData.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + resData.error);
+            }
+        })
+        .catch(err => console.error(err));
+    });
+
+    function desasignarCamion(idAsignacion) {
+        if(!confirm('¿Estás seguro de que deseas desvincular este camión del envío?')) return;
+
+        const url = `{{ url_for("envios.ver_envios") }}{{ envio.id_envio }}/desasignar-camion/${idAsignacion}`;
+
+        fetch(url, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(resData => {
+            if(resData.success) {
+                document.getElementById(`item-${idAsignacion}`).remove();
+                if(document.querySelectorAll('#lista-asignaciones tr').length === 0) {
+                    document.getElementById('lista-asignaciones').innerHTML = `
+                        <tr id="empty-row">
+                            <td colspan="4" style="text-align: center; padding: 20px;" class="text-muted">No se han asignado camiones para este despacho.</td>
+                        </tr>`;
+                }
+            } else {
+                alert('Error: ' + resData.error);
+            }
+        })
+        .catch(err => console.error(err));
+    }
+</script>
+{% endblock %}

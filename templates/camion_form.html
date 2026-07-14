@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}{% if camion %}Editar Camión{% else %}Nuevo Camión{% endif %} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>{% if camion %}Editar Camión{% else %}Nuevo Camión{% endif %}</h1>
+    <a href="{{ url_for('camiones.ver_camiones') }}" class="btn btn-secondary">Volver</a>
+</div>
+
+<div class="detail-card">
+    {% if error %}
+    <div class="alert-error" style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 12px 20px; border-radius: 4px; margin-bottom: 20px;">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" class="form-grid">
+
+        <div class="form-group">
+            <label for="id_camion">ID Camión *</label>
+            <input type="text" id="id_camion" name="id_camion"
+                   value="{{ camion.id_camion if camion else siguiente_id }}"
+                   readonly
+                   style="background-color: #e9ecef; cursor: not-allowed;"
+                   required>
+            {% if camion %}
+            <small>No editable (identificador de sistema interno)</small>
+            {% else %}
+            <small>Autogenerado por el sistema</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="placa">Placa *</label>
+            <input type="text" id="placa" name="placa" style="text-transform: uppercase;"
+                   value="{{ camion.placa if camion else '' }}"
+                   {% if camion %}readonly{% endif %} required>
+            {% if camion %}
+            <small>No editable (campo crítico legal protegido)</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="marca">Marca *</label>
+            <input type="text" id="marca" name="marca"
+                   value="{{ camion.marca if camion else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="modelo">Modelo *</label>
+            <input type="text" id="modelo" name="modelo"
+                   value="{{ camion.modelo if camion else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="capacidad_kg">Capacidad (kg) *</label>
+            <input type="number" id="capacidad_kg" name="capacidad_kg" min="0" step="any"
+                   value="{{ camion.capacidad_kg if camion else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="estado">Estado Operativo</label>
+            <select id="estado" name="estado" required>
+                <option value="disponible" {% if camion and camion.estado == 'disponible' %}selected{% endif %}>Disponible</option>
+                <option value="mantenimiento" {% if camion and camion.estado == 'mantenimiento' %}selected{% endif %}>Mantenimiento</option>
+                <option value="en_ruta" {% if camion and (camion.estado == 'en_ruta' or camion.estado == 'ocupado') %}selected{% endif %}>En Ruta</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="kilometraje">Kilometraje (km)</label>
+            <input type="number" id="kilometraje" name="kilometraje" min="0" step="1"
+                   value="{{ camion.kilometraje if camion else 0 }}">
+        </div>
+
+        <div class="form-group">
+            <label for="id_sede">ID Sede (Asociada)</label>
+            <input type="text" id="id_sede" name="id_sede"
+                   value="{{ camion.id_sede if (camion and camion.id_sede) else '' }}">
+        </div>
+
+        <div class="form-actions" style="margin-top: 20px;">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="{{ url_for('camiones.ver_camiones') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

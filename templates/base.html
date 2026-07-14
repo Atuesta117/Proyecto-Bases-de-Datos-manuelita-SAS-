@@ -9,7 +9,7 @@
 <body>
     <nav class="navbar">
         <div class="container">
-            <h1 class="logo"><img src="../static/img/logo.png"> Manuelita</h1> 
+            <h1 class="logo"><img src="{{ url_for('static', filename='../static/img/logo.png') }}"> Manuelita</h1>
             <ul class="nav-links">
                 <li><a href="{{ url_for('index') }}">Inicio</a></li>
                 <li><a href="{{ url_for('clientes.ver_clientes') }}">Clientes</a></li>
@@ -18,6 +18,9 @@
                 <li><a href="{{ url_for('ordenes_vistas.ver_ordenes') }}">Órdenes</a></li>
                 <li><a href="{{ url_for('pedidos_views.ver_pedidos') }}">Pedidos</a></li>
                 <li><a href="{{ url_for('facturas_views.ver_facturas') }}">Facturas</a></li>
+                <li><a href="{{ url_for('camiones.ver_camiones') }}">Camiones</a></li>
+                <li><a href="{{ url_for('conductores.ver_conductores') }}">Conductores</a></li>
+                <li><a href="{{ url_for('envios.ver_envios') }}">Envios</a></li>
             </ul>
         </div>
     </nav>
@@ -27,7 +30,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2024 Manuelita SAS. Todos los derechos reservados.</p>
+        <p>&copy; 2026 Manuelita SAS. Todos los derechos reservados.</p>
     </footer>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>

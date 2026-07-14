@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Conductor {{ conductor.nombre }} {{ conductor.apellido }} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section" data-api-base="/api/conductores" data-redirect="{{ url_for('conductores.ver_conductores') }}">
+    <h1>Conductor: {{ conductor.nombre }} {{ conductor.apellido }}</h1>
+    <div class="actions">
+        <a href="{{ url_for('conductores.ver_conductores') }}" class="btn btn-secondary">Volver</a>
+        <a href="{{ url_for('conductores.editar_conductor_view', id_conductor=conductor.id_conductor) }}" class="btn btn-warning">Editar</a>
+        <a href="#" class="btn btn-danger btn-eliminar"
+           data-id="{{ conductor.id_conductor }}"
+           data-nombre="{{ conductor.nombre }} {{ conductor.apellido }}">Eliminar</a>
+    </div>
+</div>
+
+<div class="detail-card">
+    <div class="detail-section">
+        <h2>Información de Identidad Legal</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>ID Conductor (Interno):</label>
+                <p>{{ conductor.id_conductor }}</p>
+            </div>
+            <div class="info-item">
+                <label>Nombre:</label>
+                <p>{{ conductor.nombre }}</p>
+            </div>
+            <div class="info-item">
+                <label>Apellido:</label>
+                <p>{{ conductor.apellido }}</p>
+            </div>
+            <div class="info-item">
+                <label>Cédula (No editable):</label>
+                <p><strong>{{ conductor.cedula }}</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-section">
+        <h2>Licencia, Contacto y Sede</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Número de Licencia:</label>
+                <p><span style="text-transform: uppercase;">{{ conductor.licencia }}</span></p>
+            </div>
+            <div class="info-item">
+                <label>Vencimiento de Licencia:</label>
+                <p>{{ conductor.fecha_vencimiento_licencia }}</p>
+            </div>
+            <div class="info-item">
+                <label>Teléfono de Contacto:</label>
+                <p>{{ conductor.telefono }}</p>
+            </div>
+            <div class="info-item">
+                <label>Sede Asociada:</label>
+                <p>{{ conductor.id_sede or 'Sin sede asignada' }}</p>
+            </div>
+            <div class="info-item">
+                <label>Disponibilidad Actual:</label>
+                <p>
+                    {% if conductor.disponible %}
+                        <span class="badge badge-success" style="background-color: #28a745; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.9em; font-weight: bold; display: inline-block;">Disponible</span>
+                    {% else %}
+                        <span class="badge badge-danger" style="background-color: #dc3545; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.9em; font-weight: bold; display: inline-block;">No Disponible</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Script integrado para el manejo de eliminación asíncrona mediante la API #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const eliminarBtn = document.querySelector('.btn-eliminar');
+    
+    if (eliminarBtn) {
+        eliminarBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const idConductor = this.getAttribute('data-id');
+            const nombreCompleto = this.getAttribute('data-nombre');
+            const redirectUrl = document.querySelector('.header-section').getAttribute('data-redirect');
+            
+            if (confirm(`¿Está seguro de que desea eliminar permanentemente al conductor "${nombreCompleto}"?`)) {
+                fetch(`/api/conductores/${idConductor}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('El conductor ha sido eliminado exitosamente.');
+                        window.location.href = redirectUrl;
+                    } else {
+                        return response.json().then(err => {
+                            throw new Error(err.error || 'Error al intentar eliminar el conductor.');
+                        });
+                    }
+                })
+                .catch(error => {
+                    alert(`No se pudo eliminar el conductor: ${error.message}`);
+                });
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

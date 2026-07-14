@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Camión {{ camion.placa }} - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section" data-api-base="/api/camiones" data-redirect="{{ url_for('camiones.ver_camiones') }}">
+    <h1>Camión: <span style="text-transform: uppercase;">{{ camion.placa }}</span></h1>
+    <div class="actions">
+        <a href="{{ url_for('camiones.ver_camiones') }}" class="btn btn-secondary">Volver</a>
+        <a href="{{ url_for('camiones.editar_camion_view', id_camion=camion.id_camion) }}" class="btn btn-warning">Editar</a>
+        <a href="#" class="btn btn-danger btn-eliminar"
+           data-id="{{ camion.id_camion }}"
+           data-placa="{{ camion.placa }}">Eliminar</a>
+    </div>
+</div>
+
+<div class="detail-card">
+    <div class="detail-section">
+        <h2>Información Técnica del Vehículo</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>ID Camión (Interno):</label>
+                <p>{{ camion.id_camion }}</p>
+            </div>
+            <div class="info-item">
+                <label>Placa (Identificador Legal):</label>
+                <p><strong style="text-transform: uppercase;">{{ camion.placa }}</strong></p>
+            </div>
+            <div class="info-item">
+                <label>Marca:</label>
+                <p>{{ camion.marca }}</p>
+            </div>
+            <div class="info-item">
+                <label>Modelo:</label>
+                <p>{{ camion.modelo }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-section">
+        <h2>Capacidad e Indicadores Operativos</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Capacidad de Carga:</label>
+                <p>{{ "{:,.0f}".format(camion.capacidad_kg) if camion.capacidad_kg is not none else "0" }} kg</p>
+            </div>
+            <div class="info-item">
+                <label>Kilometraje Actual:</label>
+                <p>{{ "{:,.0f}".format(camion.kilometraje) if camion.kilometraje is not none else "0" }} km</p>
+            </div>
+            <div class="info-item">
+                <label>Estado Operativo:</label>
+                <p>
+                    {% if camion.estado == 'disponible' %}
+                        <span class="badge badge-success" style="background-color: #28a745; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.9em; font-weight: bold; display: inline-block;">Disponible</span>
+                    {% elif camion.estado == 'mantenimiento' %}
+                        <span class="badge badge-warning" style="background-color: #ffc107; color: #212529; padding: 4px 10px; border-radius: 4px; font-size: 0.9em; font-weight: bold; display: inline-block;">Mantenimiento</span>
+                    {% elif camion.estado == 'en_ruta' or camion.estado == 'ocupado' %}
+                        <span class="badge badge-info" style="background-color: #17a2b8; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.9em; font-weight: bold; display: inline-block;">En Ruta</span>
+                    {% else %}
+                        <span class="badge badge-secondary" style="background-color: #6c757d; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.9em; font-weight: bold; display: inline-block;">{{ camion.estado }}</span>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="info-item">
+                <label>Sede Asignada:</label>
+                <p>{{ camion.id_sede or 'Sin sede asignada' }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Script integrado para el manejo de eliminación asíncrona mediante la API del microservicio #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const eliminarBtn = document.querySelector('.btn-eliminar');
+    
+    if (eliminarBtn) {
+        eliminarBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const idCamion = this.getAttribute('data-id');
+            const placa = this.getAttribute('data-placa');
+            const redirectUrl = document.querySelector('.header-section').getAttribute('data-redirect');
+            
+            if (confirm(`¿Está seguro de que desea eliminar permanentemente el camión con placa "${placa}"?`)) {
+                fetch(`/api/camiones/${idCamion}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('El camión ha sido eliminado exitosamente.');
+                        window.location.href = redirectUrl;
+                    } else {
+                        return response.json().then(err => {
+                            throw new Error(err.error || 'Error al intentar eliminar el camión.');
+                        });
+                    }
+                })
+                .catch(error => {
+                    alert(`No se pudo eliminar el camión: ${error.message}`);
+                });
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

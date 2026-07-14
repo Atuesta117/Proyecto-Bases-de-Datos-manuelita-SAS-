@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Monitoreo de Envíos - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Monitoreo de Envíos</h1>
+    <!-- Se eliminó por completo el botón de creación manual para respetar el flujo automático -->
+</div>
+
+{% if envios %}
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID Envío</th>
+                <th>Pedido Asociado</th>
+                <th>Tipo</th>
+                <th>Fecha Estimada</th>
+                <th>Estado del Despacho</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for envio in envios %}
+            <tr>
+                <td><strong>{{ envio.id_envio }}</strong></td>
+                <td>{{ envio.id_pedido_confirmado }}</td>
+                <td>
+                    {% if envio.tipo_envio == 'nacional' %}
+                        <span class="badge nacional">Nacional</span>
+                    {% else %}
+                        <span class="badge internacional">Internacional</span>
+                    {% endif %}
+                </td>
+                <td>{{ envio.fecha_entrega_estimada }}</td>
+                <td>
+                    <span class="status-indicator {{ envio.estado_envio }}">
+                        {{ envio.estado_envio | replace('_', ' ') | title }}
+                    </span>
+                </td>
+                <td class="actions">
+                    <a href="{{ url_for('envios.ver_envio_detalle', id_envio=envio.id_envio) }}" class="btn btn-small btn-info">Ver Detalle</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No se registran despachos ni envíos en el sistema.</p>
+</div>
+{% endif %}
+{% endblock %}

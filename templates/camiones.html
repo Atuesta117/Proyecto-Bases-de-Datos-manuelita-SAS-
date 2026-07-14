@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Camiones - Manuelita SAS{% endblock %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Lista de Camiones</h1>
+    <a href="{{ url_for('camiones.crear_camion_view') }}" class="btn btn-primary">+ Nuevo Camión</a>
+</div>
+
+{% if camiones %}
+<div class="table-responsive" data-api-base="/api/camiones">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID Camión</th>
+                <th>Placa</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Capacidad (kg)</th>
+                <th>Estado</th>
+                <th>Kilometraje</th>
+                <th>ID Sede</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for camion in camiones %}
+            <tr>
+                <td>{{ camion.id_camion }}</td>
+                <td><strong style="text-transform: uppercase;">{{ camion.placa }}</strong></td>
+                <td>{{ camion.marca }}</td>
+                <td>{{ camion.modelo }}</td>
+                <td>{{ "{:,.0f}".format(camion.capacidad_kg) if camion.capacidad_kg is not none else "0" }} kg</td>
+                <td>
+                    {% if camion.estado == 'disponible' %}
+                        <span class="badge badge-success" style="background-color: #28a745; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85em;">Disponible</span>
+                    {% elif camion.estado == 'mantenimiento' %}
+                        <span class="badge badge-warning" style="background-color: #ffc107; color: #212529; padding: 3px 8px; border-radius: 4px; font-size: 0.85em;">Mantenimiento</span>
+                    {% elif camion.estado == 'en_ruta' or camion.estado == 'ocupado' %}
+                        <span class="badge badge-info" style="background-color: #17a2b8; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85em;">En Ruta</span>
+                    {% else %}
+                        <span class="badge badge-secondary" style="background-color: #6c757d; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85em;">{{ camion.estado }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ "{:,.0f}".format(camion.kilometraje) if camion.kilometraje is not none else "0" }} km</td>
+                <td>{{ camion.id_sede or 'N/A' }}</td>
+                <td class="actions">
+                    <a href="{{ url_for('camiones.ver_camion_detalle', id_camion=camion.id_camion) }}" class="btn btn-small btn-info">Ver</a>
+                    <a href="{{ url_for('camiones.editar_camion_view', id_camion=camion.id_camion) }}" class="btn btn-small btn-warning">Editar</a>
+                    <a href="#" class="btn btn-small btn-danger btn-eliminar"
+                       data-id="{{ camion.id_camion }}"
+                       data-placa="{{ camion.placa }}">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{# Script integrado para el manejo de eliminación asíncrona mediante la API del microservicio #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const eliminarBtns = document.querySelectorAll('.btn-eliminar');
+    
+    eliminarBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const idCamion = this.getAttribute('data-id');
+            const placa = this.getAttribute('data-placa');
+            
+            if (confirm(`¿Está seguro de que desea eliminar el camión con placa "${placa}"?`)) {
+                fetch(`/api/camiones/${idCamion}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('El camión ha sido eliminado exitosamente.');
+                        window.location.reload();
+                    } else {
+                        return response.json().then(err => {
+                            throw new Error(err.error || 'Error al intentar eliminar el camión.');
+                        });
+                    }
+                })
+                .catch(error => {
+                    alert(`No se pudo eliminar el camión: ${error.message}`);
+                });
+            }
+        });
+    });
+});
+</script>
+
+{% else %}
+<div class="empty-state">
+    <p>No hay camiones registrados en el sistema de logística.</p>
+    <a href="{{ url_for('camiones.crear_camion_view') }}" class="btn btn-primary">+ Registrar Primer Camión</a>
+</div>
+{% endif %}
+{% endblock %}

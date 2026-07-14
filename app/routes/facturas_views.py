@@ -6,9 +6,30 @@ from app.services import (
     producto_service,
 )
 from app.models.factura import Factura
+
+# IMPORTANTE: Asegúrate de importar tu modelo Envio y Sede según la estructura de tu proyecto
+from app.models.logistica import Envio
+from app.models.logistica import Sedes  # O de donde provenga tu modelo de sedes
+from app import db
 import re
 
 facturas_bp = Blueprint("facturas_views", __name__, url_prefix="/facturas")
+
+
+def generar_siguiente_id_envio():
+    """Busca el último ID ENV-XXXXXX en la base de datos y le suma 1."""
+    envios = Envio.query.filter(Envio.id_envio.like("ENV-%")).all()
+    if not envios:
+        return "ENV-000001"
+
+    max_numero = 0
+    for e in envios:
+        match = re.match(r"ENV-(\d+)", e.id_envio)
+        if match:
+            numero = int(match.group(1))
+            if numero > max_numero:
+                max_numero = numero
+    return f"ENV-{max_numero + 1:06d}"
 
 
 def generar_siguiente_id_factura():
@@ -114,8 +135,7 @@ def ver_factura_detalle(id_factura):
 @facturas_bp.route("/pedido/<string:id_pedido>/nueva", methods=["GET", "POST"])
 def generar_factura_view(id_pedido):
     """
-    Genera la factura a partir de un pedido. REGLA DEL NEGOCIO: solo se
-    puede facturar un pedido que ya existe y está en estado 'verificado'.
+    Genera la factura a partir de un pedido.
     """
     pedido = pedido_service.obtener_pedido_por_id(id_pedido)
     if not pedido:
@@ -126,13 +146,16 @@ def generar_factura_view(id_pedido):
         p.id_producto: p for p in producto_service.obtener_todos_los_productos()
     }
 
-    # Si el pedido no está verificado ni siquiera mostramos el formulario
+    # Obtenemos todas las sedes de la base de datos para el desplegable
+    sedes = Sedes.query.all()
+
     if pedido.estado != "verificado":
         return render_template(
             "factura_form.html",
             pedido=pedido,
             cliente=cliente,
             productos=productos,
+            sedes=sedes,
             error=(
                 f"El pedido está en estado '{pedido.estado}'. Solo se puede "
                 "facturar un pedido 'verificado'. Verifica el pedido primero."
@@ -140,11 +163,10 @@ def generar_factura_view(id_pedido):
         ), 400
 
     if request.method == "POST":
-        # Extraemos los campos desde el formulario (los cuales serán readonly)
         data = {
             "id_factura": request.form.get("id_factura"),
             "numero_factura": request.form.get("numero_factura"),
-            "id_empresa": request.form.get("id_empresa"),
+            "id_empresa": "EMP-000001",  # Regla de negocio: Forzamos el ID directamente
             "metodo_pago": request.form.get("metodo_pago") or None,
             "envio": _envio_desde_form(request.form),
         }
@@ -158,28 +180,35 @@ def generar_factura_view(id_pedido):
                 )
             )
         except ValueError as e:
-            # Si falla, recalculamos los IDs para volver a renderizar con seguridad
             siguiente_id = generar_siguiente_id_factura()
             siguiente_numero = generar_siguiente_numero_factura()
+            siguiente_envio = generar_siguiente_id_envio()
             return render_template(
                 "factura_form.html",
                 pedido=pedido,
                 cliente=cliente,
                 productos=productos,
+                sedes=sedes,
                 siguiente_id=siguiente_id,
                 siguiente_numero=siguiente_numero,
+                siguiente_envio=siguiente_envio,
+                id_empresa_fijo="EMP-000001",
                 error=str(e),
             ), 400
 
-    # En la carga GET, generamos los nuevos valores
     siguiente_id = generar_siguiente_id_factura()
     siguiente_numero = generar_siguiente_numero_factura()
+    siguiente_envio = generar_siguiente_id_envio()
+
     return render_template(
         "factura_form.html",
         pedido=pedido,
         cliente=cliente,
         productos=productos,
+        sedes=sedes,
         siguiente_id=siguiente_id,
         siguiente_numero=siguiente_numero,
+        siguiente_envio=siguiente_envio,
+        id_empresa_fijo="EMP-000001",
         error=None,
     )

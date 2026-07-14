@@ -50,37 +50,47 @@
 
         <div class="form-group full-width"><h2>Datos de la Factura</h2></div>
 
-<div class="form-group">
-    <label for="id_factura">ID Factura *</label>
-    <input 
-        type="text" 
-        id="id_factura" 
-        name="id_factura" 
-        value="{{ siguiente_id }}" 
-        readonly 
-        style="background-color: #e9ecef; cursor: not-allowed;" 
-        required
-    >
-    <small class="form-text" style="color: #666; font-size: 0.85em;">ID de registro interno del sistema.</small>
-</div>
-
-<div class="form-group">
-    <label for="numero_factura">Número de Factura *</label>
-    <input 
-        type="text" 
-        id="numero_factura" 
-        name="numero_factura" 
-        value="{{ siguiente_numero }}" 
-        readonly 
-        style="background-color: #e9ecef; cursor: not-allowed;" 
-        required
-    >
-    <small class="form-text" style="color: #666; font-size: 0.85em;">Consecutivo de facturación legal.</small>
-</div>
+        <div class="form-group">
+            <label for="id_factura">ID Factura *</label>
+            <input 
+                type="text" 
+                id="id_factura" 
+                name="id_factura" 
+                value="{{ siguiente_id }}" 
+                readonly 
+                style="background-color: #e9ecef; cursor: not-allowed;" 
+                required
+            >
+            <small class="form-text" style="color: #666; font-size: 0.85em;">ID de registro interno del sistema.</small>
+        </div>
 
         <div class="form-group">
+            <label for="numero_factura">Número de Factura *</label>
+            <input 
+                type="text" 
+                id="numero_factura" 
+                name="numero_factura" 
+                value="{{ siguiente_numero }}" 
+                readonly 
+                style="background-color: #e9ecef; cursor: not-allowed;" 
+                required
+            >
+            <small class="form-text" style="color: #666; font-size: 0.85em;">Consecutivo de facturación legal.</small>
+        </div>
+
+        <!-- 1. ID EMPRESA FIJO Y BLOQUEADO -->
+        <div class="form-group">
             <label for="id_empresa">ID Empresa *</label>
-            <input type="text" id="id_empresa" name="id_empresa" placeholder="Ej: EMP-01" required>
+            <input 
+                type="text" 
+                id="id_empresa" 
+                name="id_empresa" 
+                value="{{ id_empresa_fijo }}" 
+                readonly 
+                style="background-color: #e9ecef; cursor: not-allowed;" 
+                required
+            >
+            <small class="form-text" style="color: #666; font-size: 0.85em;">ID de empresa de Manuelita SAS.</small>
         </div>
 
         <div class="form-group">
@@ -95,14 +105,30 @@
 
         <div class="form-group full-width"><h2>Datos del Envío</h2></div>
 
+        <!-- 2. ID ENVÍO AUTOGENERADO Y BLOQUEADO -->
         <div class="form-group">
             <label for="id_envio">ID Envío *</label>
-            <input type="text" id="id_envio" name="id_envio" placeholder="Ej: ENV-001" required>
+            <input 
+                type="text" 
+                id="id_envio" 
+                name="id_envio" 
+                value="{{ siguiente_envio }}" 
+                readonly 
+                style="background-color: #e9ecef; cursor: not-allowed;" 
+                required
+            >
+            <small class="form-text" style="color: #666; font-size: 0.85em;">ID de envío autogenerado secuencialmente.</small>
         </div>
 
+        <!-- 3. DESPLEGABLE DE SEDES DESDE LA BASE DE DATOS -->
         <div class="form-group">
             <label for="id_sede_origen">Sede de Origen *</label>
-            <input type="text" id="id_sede_origen" name="id_sede_origen" placeholder="Ej: SEDE-CALI" required>
+            <select id="id_sede_origen" name="id_sede_origen" required>
+                <option value="">-- Seleccione la Sede de Despacho --</option>
+                {% for sede in sedes %}
+                <option value="{{ sede.id_sede }}">{{ sede.nombre_sede if sede.nombre_sede else sede.id_sede }} ({{ sede.id_sede }})</option>
+                {% endfor %}
+            </select>
         </div>
 
         <div class="form-group">

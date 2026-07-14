@@ -1,7 +1,34 @@
 from flask import Blueprint, render_template, request, redirect, url_for, abort
 from app.services import cliente_service
+import re
+from app.models.cliente import Cliente
 
 clientes_bp = Blueprint("clientes", __name__, url_prefix="/clientes")
+
+
+def generar_siguiente_id_cliente():
+    """
+    Busca el último ID de pedido con formato PED-XXXXXX en la base de datos,
+    extrae el número, le suma 1 y formatea el nuevo ID (ej: PED-002002).
+    """
+    # Buscamos todos los IDs que empiecen con "PED-"
+    pedidos = Cliente.query.filter(Cliente.id_cliente.like("CLI-%")).all()
+
+    if not pedidos:
+        return "CLI-000001"
+
+    max_numero = 0
+    for p in pedidos:
+        # Extraemos solo la parte numérica usando una expresión regular
+        match = re.match(r"CLI-(\d+)", p.id_cliente)
+        if match:
+            numero = int(match.group(1))
+            if numero > max_numero:
+                max_numero = numero
+
+    siguiente_numero = max_numero + 1
+    # Formatea con ceros a la izquierda para garantizar un ancho de 6 dígitos
+    return f"CLI-{siguiente_numero:06d}"
 
 
 def _form_a_dict(form):
@@ -39,9 +66,20 @@ def crear_cliente_view():
                 url_for("clientes.ver_cliente_detalle", id_cliente=nuevo.id_cliente)
             )
         except ValueError as e:
-            return render_template("cliente_form.html", cliente=None, error=str(e)), 400
+            # Si ocurre un error, recalculamos el ID sugerido para volver a renderizar el formulario
+            siguiente_id = generar_siguiente_id_cliente()
+            return render_template(
+                "cliente_form.html",
+                cliente=None,
+                siguiente_id=siguiente_id,
+                error=str(e),
+            ), 400
 
-    return render_template("cliente_form.html", cliente=None, error=None)
+    # Carga inicial (GET): calculamos el ID sugerido
+    siguiente_id = generar_siguiente_id_cliente()
+    return render_template(
+        "cliente_form.html", cliente=None, siguiente_id=siguiente_id, error=None
+    )
 
 
 @clientes_bp.route("/<string:id_cliente>")

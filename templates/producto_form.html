@@ -22,13 +22,17 @@
     <fieldset>
         <legend>Datos del Producto</legend>
 
-        <div class="form-group">
+<div class="form-group">
             <label for="id_producto">ID Producto / Código de barras</label>
             <input type="text" id="id_producto" name="id_producto" class="form-control"
-                   value="{{ producto.id_producto if producto else '' }}"
-                   {% if producto %}readonly{% endif %} required>
+                   value="{{ producto.id_producto if producto else siguiente_id }}"
+                   readonly
+                   style="background-color: #e9ecef; cursor: not-allowed;" 
+                   required>
             {% if producto %}
             <small class="form-text">El ID no se puede modificar (consistencia histórica contable).</small>
+            {% else %}
+            <small class="form-text">ID autogenerado por el sistema de forma secuencial.</small>
             {% endif %}
         </div>
 

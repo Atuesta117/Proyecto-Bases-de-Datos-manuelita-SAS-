@@ -50,15 +50,33 @@
 
         <div class="form-group full-width"><h2>Datos de la Factura</h2></div>
 
-        <div class="form-group">
-            <label for="id_factura">ID Factura *</label>
-            <input type="text" id="id_factura" name="id_factura" placeholder="Ej: FAC-001" required>
-        </div>
+<div class="form-group">
+    <label for="id_factura">ID Factura *</label>
+    <input 
+        type="text" 
+        id="id_factura" 
+        name="id_factura" 
+        value="{{ siguiente_id }}" 
+        readonly 
+        style="background-color: #e9ecef; cursor: not-allowed;" 
+        required
+    >
+    <small class="form-text" style="color: #666; font-size: 0.85em;">ID de registro interno del sistema.</small>
+</div>
 
-        <div class="form-group">
-            <label for="numero_factura">Número de Factura *</label>
-            <input type="text" id="numero_factura" name="numero_factura" placeholder="Ej: MSAS-0001" required>
-        </div>
+<div class="form-group">
+    <label for="numero_factura">Número de Factura *</label>
+    <input 
+        type="text" 
+        id="numero_factura" 
+        name="numero_factura" 
+        value="{{ siguiente_numero }}" 
+        readonly 
+        style="background-color: #e9ecef; cursor: not-allowed;" 
+        required
+    >
+    <small class="form-text" style="color: #666; font-size: 0.85em;">Consecutivo de facturación legal.</small>
+</div>
 
         <div class="form-group">
             <label for="id_empresa">ID Empresa *</label>

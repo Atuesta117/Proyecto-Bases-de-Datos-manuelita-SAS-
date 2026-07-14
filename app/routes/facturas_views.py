@@ -6,8 +6,41 @@ from app.services import (
     producto_service,
 )
 from app.models.factura import Factura
+import re
 
 facturas_bp = Blueprint("facturas_views", __name__, url_prefix="/facturas")
+
+
+def generar_siguiente_id_factura():
+    """Busca el último ID FAC-XXXXXX en la base de datos y le suma 1."""
+    facturas = Factura.query.filter(Factura.id_factura.like("FAC-%")).all()
+    if not facturas:
+        return "FAC-000001"
+
+    max_numero = 0
+    for f in facturas:
+        match = re.match(r"FAC-(\d+)", f.id_factura)
+        if match:
+            numero = int(match.group(1))
+            if numero > max_numero:
+                max_numero = numero
+    return f"FAC-{max_numero + 1:06d}"
+
+
+def generar_siguiente_numero_factura():
+    """Busca el último número de factura N-FAC-XXXXXX y le suma 1."""
+    facturas = Factura.query.filter(Factura.numero_factura.like("FE-%")).all()
+    if not facturas:
+        return "FE-0000001"
+
+    max_numero = 0
+    for f in facturas:
+        match = re.match(r"FE-(\d+)", f.numero_factura)
+        if match:
+            numero = int(match.group(1))
+            if numero > max_numero:
+                max_numero = numero
+    return f"FE-{max_numero + 1:06d}"
 
 
 def _envio_desde_form(form):
@@ -82,8 +115,7 @@ def ver_factura_detalle(id_factura):
 def generar_factura_view(id_pedido):
     """
     Genera la factura a partir de un pedido. REGLA DEL NEGOCIO: solo se
-    puede facturar un pedido que ya existe y está en estado 'verificado'
-    (es decir, primero hubo que crear el pedido y verificar su stock).
+    puede facturar un pedido que ya existe y está en estado 'verificado'.
     """
     pedido = pedido_service.obtener_pedido_por_id(id_pedido)
     if not pedido:
@@ -94,8 +126,7 @@ def generar_factura_view(id_pedido):
         p.id_producto: p for p in producto_service.obtener_todos_los_productos()
     }
 
-    # Si el pedido no está verificado ni siquiera mostramos el formulario:
-    # se debe verificar antes de poder generar la factura.
+    # Si el pedido no está verificado ni siquiera mostramos el formulario
     if pedido.estado != "verificado":
         return render_template(
             "factura_form.html",
@@ -109,6 +140,7 @@ def generar_factura_view(id_pedido):
         ), 400
 
     if request.method == "POST":
+        # Extraemos los campos desde el formulario (los cuales serán readonly)
         data = {
             "id_factura": request.form.get("id_factura"),
             "numero_factura": request.form.get("numero_factura"),
@@ -126,18 +158,28 @@ def generar_factura_view(id_pedido):
                 )
             )
         except ValueError as e:
+            # Si falla, recalculamos los IDs para volver a renderizar con seguridad
+            siguiente_id = generar_siguiente_id_factura()
+            siguiente_numero = generar_siguiente_numero_factura()
             return render_template(
                 "factura_form.html",
                 pedido=pedido,
                 cliente=cliente,
                 productos=productos,
+                siguiente_id=siguiente_id,
+                siguiente_numero=siguiente_numero,
                 error=str(e),
             ), 400
 
+    # En la carga GET, generamos los nuevos valores
+    siguiente_id = generar_siguiente_id_factura()
+    siguiente_numero = generar_siguiente_numero_factura()
     return render_template(
         "factura_form.html",
         pedido=pedido,
         cliente=cliente,
         productos=productos,
+        siguiente_id=siguiente_id,
+        siguiente_numero=siguiente_numero,
         error=None,
     )

@@ -3,8 +3,37 @@ from app.services import orden_proveedor_service, proveedor_service, producto_se
 from app.models.logistica import (
     Sedes,
 )  # Importamos el modelo directamente desde donde está definido
+from app.models.orden_proveedor import OrdenPedidoProveedor
+import re
 
 ordenes_vistas_bp = Blueprint("ordenes_vistas", __name__, url_prefix="/ordenes")
+
+
+def generar_siguiente_id_orden():
+    """
+    Busca el último ID de pedido con formato PED-XXXXXX en la base de datos,
+    extrae el número, le suma 1 y formatea el nuevo ID (ej: PED-002002).
+    """
+    # Buscamos todos los IDs que empiecen con "PED-"
+    pedidos = OrdenPedidoProveedor.query.filter(
+        OrdenPedidoProveedor.id_orden.like("OPP-%")
+    ).all()
+
+    if not pedidos:
+        return "OPP-000001"
+
+    max_numero = 0
+    for p in pedidos:
+        # Extraemos solo la parte numérica usando una expresión regular
+        match = re.match(r"OPP-(\d+)", p.id_orden)
+        if match:
+            numero = int(match.group(1))
+            if numero > max_numero:
+                max_numero = numero
+
+    siguiente_numero = max_numero + 1
+    # Formatea con ceros a la izquierda para garantizar un ancho de 6 dígitos
+    return f"OPP-{siguiente_numero:06d}"
 
 
 @ordenes_vistas_bp.route("/")
@@ -22,15 +51,19 @@ def ver_orden_detalle(id_orden):
     return render_template("orden_detalle.html", orden=orden)
 
 
-@ordenes_vistas_bp.route("/nueva", methods=["GET"])
+@ordenes_vistas_bp.route(
+    "/nueva", methods=["GET", "POST"]
+)  # Agregamos POST si procesas el form aquí
 def crear_orden_view():
-    # Cargamos los datos para los selectores utilizando los servicios existentes
     proveedores = proveedor_service.obtener_todos_los_proveedores()
     productos = producto_service.obtener_todos_los_productos()
-
-    # Consultamos las sedes directamente desde el modelo de base de datos
     sedes = Sedes.query.all()
 
+    siguiente_id = generar_siguiente_id_orden()
     return render_template(
-        "orden_form.html", proveedores=proveedores, productos=productos, sedes=sedes
+        "orden_form.html",
+        proveedores=proveedores,
+        productos=productos,
+        sedes=sedes,
+        siguiente_id=siguiente_id,  # <-- Enviamos el ID aquí
     )

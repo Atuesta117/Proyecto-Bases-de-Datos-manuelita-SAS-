@@ -1,7 +1,35 @@
 from flask import Blueprint, render_template, request, redirect, url_for, abort
 from app.services import pedido_service, cliente_service, producto_service
 
+import re
+from app.models.pedido import Pedido  # Asegúrate de importar tu modelo de Pedido
+
 pedidos_bp = Blueprint("pedidos_views", __name__, url_prefix="/pedidos")
+
+
+def generar_siguiente_id_pedido():
+    """
+    Busca el último ID de pedido con formato PED-XXXXXX en la base de datos,
+    extrae el número, le suma 1 y formatea el nuevo ID (ej: PED-002002).
+    """
+    # Buscamos todos los IDs que empiecen con "PED-"
+    pedidos = Pedido.query.filter(Pedido.id_pedido.like("PED-%")).all()
+
+    if not pedidos:
+        return "PED-000001"
+
+    max_numero = 0
+    for p in pedidos:
+        # Extraemos solo la parte numérica usando una expresión regular
+        match = re.match(r"PED-(\d+)", p.id_pedido)
+        if match:
+            numero = int(match.group(1))
+            if numero > max_numero:
+                max_numero = numero
+
+    siguiente_numero = max_numero + 1
+    # Formatea con ceros a la izquierda para garantizar un ancho de 6 dígitos
+    return f"PED-{siguiente_numero:06d}"
 
 
 def _items_desde_form(form, id_pedido):
@@ -54,15 +82,22 @@ def crear_pedido_view():
                 url_for("pedidos_views.ver_pedido_detalle", id_pedido=nuevo.id_pedido)
             )
         except ValueError as e:
+            siguiente_id = generar_siguiente_id_pedido()
             return render_template(
                 "pedido_form.html",
                 clientes=clientes,
                 productos=productos,
+                siguiente_id=siguiente_id,
                 error=str(e),
             ), 400
 
+    siguiente_id = generar_siguiente_id_pedido()
     return render_template(
-        "pedido_form.html", clientes=clientes, productos=productos, error=None
+        "pedido_form.html",
+        clientes=clientes,
+        productos=productos,
+        siguiente_id=siguiente_id,
+        error=None,
     )
 
 

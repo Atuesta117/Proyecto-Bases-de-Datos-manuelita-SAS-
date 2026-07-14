@@ -1,7 +1,34 @@
 from flask import Blueprint, render_template, request, redirect, url_for, abort
 from app.services import proveedor_service
+from app.models.proveedor import Proveedor
+import re
 
 proveedores_bp = Blueprint("proveedores", __name__, url_prefix="/proveedores")
+
+
+def generar_siguiente_id_proveedor():
+    """
+    Busca el último ID de pedido con formato PED-XXXXXX en la base de datos,
+    extrae el número, le suma 1 y formatea el nuevo ID (ej: PED-002002).
+    """
+    # Buscamos todos los IDs que empiecen con "PED-"
+    pedidos = Proveedor.query.filter(Proveedor.id_proveedor.like("PROV-%")).all()
+
+    if not pedidos:
+        return "PROV-000001"
+
+    max_numero = 0
+    for p in pedidos:
+        # Extraemos solo la parte numérica usando una expresión regular
+        match = re.match(r"PROV-(\d+)", p.id_proveedor)
+        if match:
+            numero = int(match.group(1))
+            if numero > max_numero:
+                max_numero = numero
+
+    siguiente_numero = max_numero + 1
+    # Formatea con ceros a la izquierda para garantizar un ancho de 6 dígitos
+    return f"PED-{siguiente_numero:06d}"
 
 
 def _form_a_dict(form):
@@ -51,11 +78,20 @@ def crear_proveedor_view():
                 )
             )
         except ValueError as e:
+            # Si ocurre un error, recalculamos el ID sugerido para volver a renderizar el formulario
+            siguiente_id = generar_siguiente_id_proveedor()
             return render_template(
-                "proveedor_form.html", proveedor=None, error=str(e)
+                "proveedor_form.html",
+                proveedor=None,
+                siguiente_id=siguiente_id,
+                error=str(e),
             ), 400
 
-    return render_template("proveedor_form.html", proveedor=None, error=None)
+    # Carga inicial (GET): calculamos el ID sugerido
+    siguiente_id = generar_siguiente_id_proveedor()
+    return render_template(
+        "proveedor_form.html", proveedor=None, siguiente_id=siguiente_id, error=None
+    )
 
 
 @proveedores_bp.route("/<string:id_proveedor>")

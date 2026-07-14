@@ -1,8 +1,35 @@
 from flask import Blueprint, render_template, request, redirect, url_for, abort
 from app.services import producto_service
 from app.services import proveedor_service
+from app.models.producto import Producto
+import re
 
 productos_bp = Blueprint("productos", __name__, url_prefix="/productos")
+
+
+def generar_siguiente_id_producto():
+    """
+    Busca el último ID de pedido con formato PED-XXXXXX en la base de datos,
+    extrae el número, le suma 1 y formatea el nuevo ID (ej: PED-002002).
+    """
+    # Buscamos todos los IDs que empiecen con "PED-"
+    pedidos = Producto.query.filter(Producto.id_producto.like("PROD-%")).all()
+
+    if not pedidos:
+        return "PROD-000001"
+
+    max_numero = 0
+    for p in pedidos:
+        # Extraemos solo la parte numérica usando una expresión regular
+        match = re.match(r"PROD-(\d+)", p.id_producto)
+        if match:
+            numero = int(match.group(1))
+            if numero > max_numero:
+                max_numero = numero
+
+    siguiente_numero = max_numero + 1
+    # Formatea con ceros a la izquierda para garantizar un ancho de 6 dígitos
+    return f"PROD-{siguiente_numero:06d}"
 
 
 # --- Reglas de negocio: Días de Stock (NO se almacena, se calcula al vuelo) ---
@@ -100,17 +127,22 @@ def crear_producto_view():
                 url_for("productos.ver_producto_detalle", id_producto=nuevo.id_producto)
             )
         except ValueError as e:
-            # Cubre, entre otras, la restricción: no se puede registrar un
-            # producto/insumo con un proveedor que no exista previamente.
+            siguiente_id = generar_siguiente_id_producto()
             return render_template(
                 "producto_form.html",
                 producto=None,
                 proveedores=proveedores,
+                siguiente_id=siguiente_id,  # <-- Enviamos el ID aquí en caso de error
                 error=str(e),
             ), 400
 
+    siguiente_id = generar_siguiente_id_producto()
     return render_template(
-        "producto_form.html", producto=None, proveedores=proveedores, error=None
+        "producto_form.html",
+        producto=None,
+        proveedores=proveedores,
+        siguiente_id=siguiente_id,  # <-- Enviamos el ID aquí
+        error=None,
     )
 
 
@@ -165,3 +197,4 @@ def editar_producto_view(id_producto):
     return render_template(
         "producto_form.html", producto=producto, proveedores=proveedores, error=None
     )
+

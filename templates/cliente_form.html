@@ -15,11 +15,13 @@
 
     <form method="POST" class="form-grid">
 
-        <div class="form-group">
+<div class="form-group">
             <label for="id_cliente">ID Cliente *</label>
             <input type="text" id="id_cliente" name="id_cliente"
-                   value="{{ cliente.id_cliente if cliente else '' }}"
-                   {% if cliente %}readonly{% endif %} required>
+                   value="{{ cliente.id_cliente if cliente else siguiente_id }}"
+                   readonly 
+                   style="background-color: #e9ecef; cursor: not-allowed;" 
+                   required>
         </div>
 
         <div class="form-group">
